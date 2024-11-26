@@ -62,7 +62,7 @@ const ListVoucher = () => {
                     return (
                         <div
                             key={index}
-                            className="max-md:h-52 max-md:w-[205px] w-[300px] flex-shrink-0 rounded-lg shadow-lg bg-white flex flex-col overflow-hidden snap-start cursor-pointer pb-1"
+                            className="max-md:h-52 max-md:w-[220px] w-[300px] flex-shrink-0 rounded-lg shadow-lg bg-white flex flex-col overflow-hidden snap-start cursor-pointer pb-1"
                         >
                             <div className="w-full flex items-center justify-center text-4xl h-32 max-md:h-[160px] bg-[#fef32a]">
                                 <RiDiscountPercentFill />
