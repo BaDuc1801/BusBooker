@@ -54,7 +54,7 @@ const Layout = () => {
                 </button>
             </div>
             <Search />
-            <div className="mb-[100px]">
+            <div className="max-md:mb-[100px]">
                 <Outlet />
             </div>
         </div>

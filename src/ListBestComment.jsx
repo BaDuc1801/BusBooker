@@ -35,9 +35,9 @@ const ListBestComment = () => {
     };
     return (
         <div className='mx-auto max-md:w-[90%] w-[70%] mt-[50px]'>
-            <p className='text-2xl font-semibold'>Khách hàng nói gì về Vexere</p>
+            <p className='text-2xl font-semibold'>Khách hàng nói gì về BusBooker</p>
             <Slider {...settings}>
-                <div className='p-2 h-[360px]'>
+                <div className='p-2 h-[362px] max-md:h-[400px]'>
                     <table className="border-gray-100 rounded-lg shadow border-2 h-full">
                         <td className="p-4 max-md:p-4">
                             <div className='max-md:flex max-md:gap-4 max-md:items-center'>
@@ -52,17 +52,17 @@ const ListBestComment = () => {
                                 </div>
                             </div>
                             <p className='md:hidden mt-2'>
-                                Lần trước tôi có việc gấp phải đi công tác, lên mạng tìm đặt vé xe thì tình cờ tìm thấy Vexere. Sau khi tham khảo, tôi quyết định đặt vé và thanh toán. Công nhận rất tiện và nhanh chóng. Chỉ một lúc sau, nhà xe liên hệ xác nhận vé ngay và thông báo thời gian xe dự kiến đón để tôi chuẩn bị. Tôi khá bất ngờ vì nhà xe có thông tin của mình nhanh đến vậy. Chuyến đi hôm đó rất tuyệt. Tôi nhất định sẽ tiếp tục ủng hộ Vexere.
+                                Lần trước tôi có việc gấp phải đi công tác, lên mạng tìm đặt vé xe thì tình cờ tìm thấy BusBooker. Sau khi tham khảo, tôi quyết định đặt vé và thanh toán. Công nhận rất tiện và nhanh chóng. Chỉ một lúc sau, nhà xe liên hệ xác nhận vé ngay và thông báo thời gian xe dự kiến đón để tôi chuẩn bị. Tôi khá bất ngờ vì nhà xe có thông tin của mình nhanh đến vậy. Chuyến đi hôm đó rất tuyệt. Tôi nhất định sẽ tiếp tục ủng hộ BusBooker.
                             </p>
                         </td>
                         <td className="align-top p-4 max-md:p-10 max-md:hidden">
                             <p>
-                                Lần trước tôi có việc gấp phải đi công tác, lên mạng tìm đặt vé xe thì tình cờ tìm thấy Vexere. Sau khi tham khảo, tôi quyết định đặt vé và thanh toán. Công nhận rất tiện và nhanh chóng. Chỉ một lúc sau, nhà xe liên hệ xác nhận vé ngay và thông báo thời gian xe dự kiến đón để tôi chuẩn bị. Tôi khá bất ngờ vì nhà xe có thông tin của mình nhanh đến vậy. Chuyến đi hôm đó rất tuyệt. Tôi nhất định sẽ tiếp tục ủng hộ Vexere.
+                                Lần trước tôi có việc gấp phải đi công tác, lên mạng tìm đặt vé xe thì tình cờ tìm thấy BusBooker. Sau khi tham khảo, tôi quyết định đặt vé và thanh toán. Công nhận rất tiện và nhanh chóng. Chỉ một lúc sau, nhà xe liên hệ xác nhận vé ngay và thông báo thời gian xe dự kiến đón để tôi chuẩn bị. Tôi khá bất ngờ vì nhà xe có thông tin của mình nhanh đến vậy. Chuyến đi hôm đó rất tuyệt. Tôi nhất định sẽ tiếp tục ủng hộ BusBooker.
                             </p>
                         </td>
                     </table>
                 </div>
-                <div className='p-2 h-[360px]'>
+                <div className='p-2 h-[362px] max-md:h-[400px]'>
                     <table className="border-gray-100 rounded-lg shadow border-2 h-full">
                         <td className="p-4 max-md:p-4">
                             <div className='max-md:flex max-md:gap-4 max-md:items-center'>
@@ -77,15 +77,15 @@ const ListBestComment = () => {
                                 </div>
                             </div>
                             <p className='md:hidden mt-2'>
-                                Các đối tác của Vexere đều là những hãng xe lớn, có uy tín nên tôi hoàn toàn yên tâm khi lựa chọn đặt vé cho bản thân và gia đình. Nhờ hiển thị rõ nhà xe và vị trí chỗ trống trên xe, tôi rất dễ dàng tìm chuyến mình muốn và chỗ mình muốn ngồi. Còn hình thức thanh toán có cả thẻ, ví, tại nhà xe và tốc độ thanh toán thì siêu nhanh, tiết kiệm cho tôi rất nhiều thời gian.</p>
+                                Các đối tác của BusBooker đều là những hãng xe lớn, có uy tín nên tôi hoàn toàn yên tâm khi lựa chọn đặt vé cho bản thân và gia đình. Nhờ hiển thị rõ nhà xe và vị trí chỗ trống trên xe, tôi rất dễ dàng tìm chuyến mình muốn và chỗ mình muốn ngồi. Còn hình thức thanh toán có cả thẻ, ví, tại nhà xe và tốc độ thanh toán thì siêu nhanh, tiết kiệm cho tôi rất nhiều thời gian.</p>
                         </td>
                         <td className="align-top p-4 max-md:p-10 max-md:hidden">
                             <p>
-                                Các đối tác của Vexere đều là những hãng xe lớn, có uy tín nên tôi hoàn toàn yên tâm khi lựa chọn đặt vé cho bản thân và gia đình. Nhờ hiển thị rõ nhà xe và vị trí chỗ trống trên xe, tôi rất dễ dàng tìm chuyến mình muốn và chỗ mình muốn ngồi. Còn hình thức thanh toán có cả thẻ, ví, tại nhà xe và tốc độ thanh toán thì siêu nhanh, tiết kiệm cho tôi rất nhiều thời gian.</p>
+                                Các đối tác của BusBooker đều là những hãng xe lớn, có uy tín nên tôi hoàn toàn yên tâm khi lựa chọn đặt vé cho bản thân và gia đình. Nhờ hiển thị rõ nhà xe và vị trí chỗ trống trên xe, tôi rất dễ dàng tìm chuyến mình muốn và chỗ mình muốn ngồi. Còn hình thức thanh toán có cả thẻ, ví, tại nhà xe và tốc độ thanh toán thì siêu nhanh, tiết kiệm cho tôi rất nhiều thời gian.</p>
                         </td>
                     </table>
                 </div>
-                <div className='p-2 h-[360px]'>
+                <div className='p-2 h-[362px] max-md:h-[400px]'>
                     <table className="border-gray-100 rounded-lg shadow border-2 h-full">
                         <td className="p-4 max-md:p-4">
                             <div className='max-md:flex max-md:gap-4 max-md:items-center'>
@@ -100,15 +100,15 @@ const ListBestComment = () => {
                                 </div>
                             </div>
                             <p className='md:hidden mt-2'>
-                                Vexere là ứng dụng đầu tiên tôi nghĩ tới khi cần đặt vé xe. Vì không những Vexere có nhiều ưu đãi lớn mà còn có nhiều hãng xe chất lượng, tôi được tuỳ chọn chỗ yêu thích nên tôi rất hài lòng.                            </p>
+                                BusBooker là ứng dụng đầu tiên tôi nghĩ tới khi cần đặt vé xe. Vì không những BusBooker có nhiều ưu đãi lớn mà còn có nhiều hãng xe chất lượng, tôi được tuỳ chọn chỗ yêu thích nên tôi rất hài lòng.                            </p>
                         </td>
                         <td className="align-top p-4 max-md:p-10 max-md:hidden">
                             <p>
-                                Vexere là ứng dụng đầu tiên tôi nghĩ tới khi cần đặt vé xe. Vì không những Vexere có nhiều ưu đãi lớn mà còn có nhiều hãng xe chất lượng, tôi được tuỳ chọn chỗ yêu thích nên tôi rất hài lòng.                            </p>
+                                BusBooker là ứng dụng đầu tiên tôi nghĩ tới khi cần đặt vé xe. Vì không những BusBooker có nhiều ưu đãi lớn mà còn có nhiều hãng xe chất lượng, tôi được tuỳ chọn chỗ yêu thích nên tôi rất hài lòng.                            </p>
                         </td>
                     </table>
                 </div>
-                <div className='p-2 h-[360px]'>
+                <div className='p-2 h-[362px] max-md:h-[400px]'>
                     <table className="border-gray-100 rounded-lg shadow border-2 h-full">
                         <td className="p-4 max-md:p-4">
                             <div className='max-md:flex max-md:gap-4 max-md:items-center'>
@@ -123,11 +123,11 @@ const ListBestComment = () => {
                                 </div>
                             </div>
                             <p className='md:hidden mt-2'>
-                                Tôi thường chọn đặt vé tại Vexere mỗi khi du lịch cùng người thân, bạn bè. Bên cạnh việc đặt vé nhanh chóng, thuận tiện, Vexere còn có các đợt Flashsale định kỳ lên đến 50%. Săn vé thành công vào các dịp này giúp tôi tiết kiệm đáng kể chi phí đi lại cho mỗi chuyến đi.                            </p>
+                                Tôi thường chọn đặt vé tại BusBooker mỗi khi du lịch cùng người thân, bạn bè. Bên cạnh việc đặt vé nhanh chóng, thuận tiện, BusBooker còn có các đợt Flashsale định kỳ lên đến 50%. Săn vé thành công vào các dịp này giúp tôi tiết kiệm đáng kể chi phí đi lại cho mỗi chuyến đi.                            </p>
                         </td>
                         <td className="align-top p-4 max-md:p-10 max-md:hidden">
                             <p>
-                                Tôi thường chọn đặt vé tại Vexere mỗi khi du lịch cùng người thân, bạn bè. Bên cạnh việc đặt vé nhanh chóng, thuận tiện, Vexere còn có các đợt Flashsale định kỳ lên đến 50%. Săn vé thành công vào các dịp này giúp tôi tiết kiệm đáng kể chi phí đi lại cho mỗi chuyến đi.                            </p>
+                                Tôi thường chọn đặt vé tại BusBooker mỗi khi du lịch cùng người thân, bạn bè. Bên cạnh việc đặt vé nhanh chóng, thuận tiện, BusBooker còn có các đợt Flashsale định kỳ lên đến 50%. Săn vé thành công vào các dịp này giúp tôi tiết kiệm đáng kể chi phí đi lại cho mỗi chuyến đi.                            </p>
                         </td>
                     </table>
                 </div>
