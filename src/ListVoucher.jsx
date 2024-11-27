@@ -56,7 +56,7 @@ const ListVoucher = () => {
 
     return (
         <div className='mx-auto max-md:w-[90%] w-[70%] mt-[50px]'>
-            <p className='text-2xl font-semibold'>Khuyến Mãi Không Thể Bỏ Lỡ</p>
+            <p className='text-2xl font-semibold'>Khuyến mãi không thể bỏ lỡ</p>
             <div className="flex overflow-x-auto whitespace-nowrap gap-4 p-4 snap-x snap-mandatory">
                 {vouchers.map((item, index) => {
                     return (
