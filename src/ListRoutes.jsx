@@ -68,7 +68,7 @@ const ListRoutes = () => {
                     return (
                         <div
                             key={index}
-                            className="h-68 max-md:h-48 max-md:w-[200px] w-[350px] flex-shrink-0 rounded-lg shadow-lg bg-white flex flex-col overflow-hidden snap-start cursor-pointer pb-1"
+                            className="h-68 max-md:h-48 max-md:w-[210px] w-[350px] flex-shrink-0 rounded-lg shadow-lg bg-white flex flex-col overflow-hidden snap-start cursor-pointer pb-1"
                         >
                             <img
                                 src={item.img}

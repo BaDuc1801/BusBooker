@@ -6,6 +6,7 @@ import { MdManageAccounts } from "react-icons/md"
 import { RiAccountCircleLine } from "react-icons/ri"
 import { TiThMenu } from "react-icons/ti"
 import { Outlet } from "react-router-dom"
+import Search from "./Search"
 
 const Layout = () => {
 
@@ -52,6 +53,7 @@ const Layout = () => {
                     Tài khoản
                 </button>
             </div>
+            <Search />
             <div className="mb-[100px]">
                 <Outlet />
             </div>

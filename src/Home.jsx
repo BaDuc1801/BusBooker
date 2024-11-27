@@ -1,14 +1,14 @@
 import React from 'react'
-import Search from './Search.jsx';
 import ListRoutes from './ListRoutes.jsx';
 import ListVoucher from './ListVoucher.jsx';
+import ListBestComment from './ListBestComment.jsx';
 
 const Home = () => {
     return (
         <div>
-            <Search />
             <ListRoutes />
-            <ListVoucher/>
+            <ListVoucher />
+            <ListBestComment/>
         </div>
     )
 }
