@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 const Login = () => {
     const [form] = Form.useForm();
-
     const onFinish = (values) => {
         console.log(values);
     };
@@ -53,7 +52,7 @@ const Login = () => {
                 <Form.Item name="remember" valuePropName="checked" label={null}>
                     <div className='flex w-full items-center justify-between'>
                     <Checkbox>Remember me</Checkbox>
-                    <Link>Quên mật khẩu?</Link>
+                    <Link to="/forgot-password">Quên mật khẩu?</Link>
                     </div>
                 </Form.Item>
                 <Form.Item>
@@ -62,7 +61,7 @@ const Login = () => {
                     </Button>
                 </Form.Item>
                 <div className='flex items-center justify-center gap-2'>
-                    <p>Bạn chưa có tài khoản?</p><Link className='text-[#1677ff]'>Đăng ký</Link>
+                    <p>Bạn chưa có tài khoản?</p><Link className='text-[#1677ff]' to="/register">Đăng ký</Link>
                 </div>
             </Form>
         </div>
