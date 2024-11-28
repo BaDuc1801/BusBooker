@@ -5,11 +5,11 @@ import { LuTicket } from "react-icons/lu"
 import { MdManageAccounts } from "react-icons/md"
 import { RiAccountCircleLine } from "react-icons/ri"
 import { TiThMenu } from "react-icons/ti"
-import { Outlet } from "react-router-dom"
+import { Outlet, useNavigate } from "react-router-dom"
 import Search from "./Search"
 
 const Layout = () => {
-
+    const nav = useNavigate();
     return (
         <div>
             <div className="flex justify-between bg-[#1677ff] text-white text-[16px] p-4  font-semibold">
@@ -34,22 +34,23 @@ const Layout = () => {
                         <FaPhoneAlt />
                         Hotline 24/7
                     </button>
-                    <button className="flex items-center bg-white text-blue-900 py-2 px-3 rounded-md">
+                    <button className="flex items-center bg-white text-blue-900 py-2 px-3 rounded-md"
+                        onClick={() => { nav("/login") }}>
                         Đăng nhập
                     </button>
                 </div>
             </div>
             <div className="flex items-center justify-around fixed w-full z-50 py-2 border-grey border-t-2 bottom-0 bg-white font-semibold md:hidden">
                 <button className="flex flex-col items-center">
-                    <IoSearch className="text-2xl"/>
+                    <IoSearch className="text-2xl" />
                     Tìm kiếm
                 </button>
                 <button className="flex flex-col items-center">
-                    <LuTicket className="text-2xl"/>
+                    <LuTicket className="text-2xl" />
                     Vé của tôi
                 </button>
                 <button className="flex flex-col items-center">
-                    <RiAccountCircleLine className="text-2xl"/>
+                    <RiAccountCircleLine className="text-2xl" />
                     Tài khoản
                 </button>
             </div>
