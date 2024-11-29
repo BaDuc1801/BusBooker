@@ -10,7 +10,7 @@ const Register = () => {
     console.log(values);
   };
   return (
-    <div className='bg-blue-100 max-md:bg-white h-screen flex items-center justify-center'>
+    <div className='bg-blue-100 h-screen flex items-center justify-center'>
       <Form
         form={form}
         onFinish={onFinish}

@@ -5,17 +5,17 @@ import { LuTicket } from "react-icons/lu"
 import { MdManageAccounts } from "react-icons/md"
 import { RiAccountCircleLine } from "react-icons/ri"
 import { TiThMenu } from "react-icons/ti"
-import { Outlet, useNavigate } from "react-router-dom"
+import { Link, Outlet, useNavigate } from "react-router-dom"
 import Search from "./Search"
-import { Drawer, Menu } from "antd"
+import { Drawer, Menu, Tooltip } from "antd"
 import { useState } from "react"
 
 const Layout = () => {
     const nav = useNavigate();
-    const [menuVisible, setMenuVisible] = useState(false);  // Trạng thái menu
+    const [menuVisible, setMenuVisible] = useState(false);
 
     const toggleMenu = () => {
-        setMenuVisible(!menuVisible);  // Đổi trạng thái của menu khi bấm vào TiThMenu
+        setMenuVisible(!menuVisible);
     };
     const items = [
         {
@@ -126,11 +126,11 @@ const Layout = () => {
     return (
         <div>
             <div className="flex justify-between bg-[#1677ff] text-white text-[16px] p-4 font-semibold">
-                <div className="flex items-center text-3xl gap-1 cursor-pointer">
+                <Link className="flex items-center text-3xl gap-1 cursor-pointer" to="">
                     <TiThMenu onClick={toggleMenu} className="hidden max-md:block max-md:mr-4" />
                     <IoBus className="text-yellow-300" />
                     BusBooker
-                </div>
+                </Link>
                 {menuVisible ?
                     <Drawer
                         placement="left"
@@ -150,10 +150,13 @@ const Layout = () => {
                     : ""
                 }
                 <div className="flex items-center gap-5">
-                    <div className="flex items-center gap-2 cursor-pointer max-md:hidden">
+                    <Link to="/my-storage" className="flex items-center gap-2 cursor-pointer max-md:hidden">
                         <BsTicketPerforatedFill className="text-xl" />
-                        Vé của tôi
-                    </div>
+                        Đơn hàng của tôi
+                    </Link>
+                    <Link to="register-sale" className="flex items-center gap-2 cursor-pointer max-md:hidden">
+                        Mở bán vé trên BusBooker
+                    </Link>
                     {
                         true ? <></> :
                             <div className="flex items-center gap-1 cursor-pointer max-md:hidden">
@@ -161,10 +164,21 @@ const Layout = () => {
                                 Quản lý
                             </div>
                     }
-                    <button className="flex items-center max-md:hidden bg-white text-blue-900 py-2 px-3 rounded-md gap-2">
-                        <FaPhoneAlt />
-                        Hotline 24/7
-                    </button>
+                    <Tooltip placement="bottomRight"
+                        title={<div className="text-black">
+                            <p>
+                                <span className="cursor-poiter text-blue-600">0981155865</span> - Để đặt vé qua điện thoại (24/7)</p>
+                            <p>
+                                <span className="cursor-poiter text-blue-600">0985511568</span> - Để phản hồi về dịch vụ và xử lý sự cố</p>
+                        </div>}
+                        color="white"
+                        trigger={"click"}
+                    >
+                        <button className="flex items-center max-md:hidden bg-white text-blue-900 py-2 px-3 rounded-md gap-2">
+                            <FaPhoneAlt />
+                            Hotline 24/7
+                        </button>
+                    </Tooltip>
                     <button className="flex items-center bg-white text-blue-900 py-2 px-3 rounded-md"
                         onClick={() => { nav("/login") }}>
                         Đăng nhập
@@ -176,17 +190,18 @@ const Layout = () => {
                     <IoSearch className="text-2xl" />
                     Tìm kiếm
                 </button>
-                <button className="flex flex-col items-center">
-                    <LuTicket className="text-2xl" />
-                    Vé của tôi
-                </button>
+                <Link to="/my-storage">
+                    <button className="flex flex-col items-center">
+                        <LuTicket className="text-2xl" />
+                        Vé của tôi
+                    </button>
+                </Link>
                 <button className="flex flex-col items-center">
                     <RiAccountCircleLine className="text-2xl" />
                     Tài khoản
                 </button>
             </div>
-            <Search />
-            <div className="max-md:mb-[100px]">
+            <div>
                 <Outlet />
             </div>
         </div>
