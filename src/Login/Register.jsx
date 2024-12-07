@@ -1,14 +1,39 @@
-import { Button, Checkbox, Form, Input } from 'antd'
-import React from 'react'
+import { Button, Form, Input } from 'antd'
+import Password from 'antd/es/input/Password';
+import axios from 'axios';
+import React, { useEffect } from 'react'
 import { IoBus } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [form] = Form.useForm();
   const nav = useNavigate();
-  const onFinish = (values) => {
-    console.log(values);
+
+  const beUrl = import.meta.env.VITE_APP_BE_URL;
+
+  const onFinish = async (values) => {
+    try {
+      await axios.post(`${beUrl}/users/register`, values);
+      nav('/login');
+    } catch (error) {
+      form.setFields([
+        {
+          name: 'email',
+          errors: ['Email đã tồn tại!'],
+        },
+      ]);
+      setTimeout(() => {
+        const { username } = form.getFieldValue();
+        form.setFieldsValue({
+          email: '',
+          password: '',
+          confirm: ''
+        });
+        form.setFieldsValue({ username })
+      }, 2000)
+    }
   };
+
   return (
     <div className='bg-blue-100 h-screen flex items-center justify-center'>
       <Form
@@ -18,6 +43,18 @@ const Register = () => {
         className='bg-white w-[400px] p-5 rounded-lg'
       >
         <p className='text-center font-bold text-3xl mb-4 text-[#1677ff] flex justify-center items-center gap-2'> <IoBus className="text-yellow-300 text-3xl" />BusBooker</p>
+        <Form.Item
+          label="Họ và tên"
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng nhập tên của bạn!',
+            },
+          ]}
+        >
+          <Input placeholder='Nhập tên của bạn' className='p-2' />
+        </Form.Item>
         <Form.Item
           label="Email"
           name="email"
@@ -68,10 +105,10 @@ const Register = () => {
             }),
           ]}
         >
-          <Input.Password className='p-2' placeholder='Xác nhận mật khẩu'/>
+          <Input.Password className='p-2' placeholder='Xác nhận mật khẩu' />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" className='w-full py-4' onClick={() => nav("/login")}>
+          <Button type="primary" htmlType="submit" className='w-full py-4'>
             Đăng ký
           </Button>
         </Form.Item>

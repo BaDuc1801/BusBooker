@@ -1,8 +1,19 @@
 import { Tabs } from 'antd'
 import Item from 'antd/es/list/Item'
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
+import { UserContext } from './Context/UserContext'
+import { useOutletContext } from 'react-router-dom'
 
 const UserStorage = () => {
+    const {user} = useContext(UserContext);
+    const {setVisible} = useOutletContext();
+    useEffect(() => {
+        // Hide div when navigating to this page
+        setVisible(true); // Show the div when the page is active
+        return () => {
+          setVisible(false); // Hide div when navigating away
+        };
+      }, [setVisible]);
     return (
         <div className='flex justify-center items-center h-[calc(100vh-72px)] bg-[#F2F4F7] max-md:pb-[100px]'>
             <Tabs defaultActiveKey='1'

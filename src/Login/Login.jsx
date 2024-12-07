@@ -1,13 +1,36 @@
 import { Button, Checkbox, Form, Input } from 'antd'
-import React from 'react'
+import React, { useContext } from 'react'
 import { IoBus } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserContext } from '../Context/UserContext';
 
 const Login = () => {
     const [form] = Form.useForm();
-    const onFinish = (values) => {
-        console.log(values);
+    const nav = useNavigate();
+    const {login, authenticated} = useContext(UserContext)
+
+    const onFinish = async (values) => {
+        try {
+            await login(values); 
+        } catch (error) {
+            form.setFields([
+                {
+                    name: 'email',
+                    errors: [''],
+                },
+                {
+                    name: 'password',
+                    errors: ['Email or Password is incorrect'],
+                },
+            ]);
+            setTimeout(() => { form.setFieldValue('password', '') }, 2000)
+        }
     };
+    
+    if (authenticated) {
+        nav('/');  
+    }
+
     return (
         <div className='bg-blue-100 h-screen flex items-center justify-center'>
             <Form
@@ -49,10 +72,10 @@ const Login = () => {
                 >
                     <Input.Password placeholder="Nhập mật khẩu của bạn" className='p-2' />
                 </Form.Item>
-                <Form.Item name="remember" valuePropName="checked" label={null}>
+                <Form.Item valuePropName="checked" label={null}>
                     <div className='flex w-full items-center justify-between'>
-                    <Checkbox>Remember me</Checkbox>
-                    <Link to="/forgot-password">Quên mật khẩu?</Link>
+                        <Checkbox>Remember me</Checkbox>
+                        <Link to="/forgot-password">Quên mật khẩu?</Link>
                     </div>
                 </Form.Item>
                 <Form.Item>
