@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../Context/UserContext';
 
 const ListRoutes = ({ listRoutes }) => {
     const nav = useNavigate(); 
+    const {setOriginChoice, setDestiChoice} = useContext(UserContext);
 
-    const handleClick = (itemId) => {
-        nav(`/route-details/${itemId}`);
+    const handleClick = (item) => {
+        nav(`/route-details`);
+        setOriginChoice(item.origin);
+        setDestiChoice(item.destination);
     };
 
     return (
@@ -17,7 +21,7 @@ const ListRoutes = ({ listRoutes }) => {
                         <div
                             key={index}
                             className="h-68 max-md:h-48 max-md:w-[210px] w-[350px] flex-shrink-0 rounded-lg shadow-lg bg-white flex flex-col overflow-hidden snap-start cursor-pointer pb-1"
-                            onClick={() => handleClick(item._id)}
+                            onClick={() => handleClick(item)}
                         >
                             <img
                                 src={item?.img}

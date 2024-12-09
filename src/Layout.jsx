@@ -160,16 +160,17 @@ const Layout = () => {
     const { user, authenticated, logout } = useContext(UserContext);
     const beUrl = import.meta.env.VITE_APP_BE_URL;
     const [listRoutes, setListRoutes] = useState([]);
-    const [visible, setVisible] = useState(false)
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             const list = await axios.get(`${beUrl}/routes`);
             setListRoutes(list.data);
-            setListRoutes(false);
+            setVisible(false);
         }
         fetchData()
     }, [])
+
     return (
         <div>
             <div className="flex justify-between bg-[#1677ff] text-white text-[16px] p-4 font-semibold">
@@ -228,7 +229,7 @@ const Layout = () => {
                     </Tooltip>
                     {authenticated ?
                         <Dropdown
-                            menu={{ items: itemsDrop }} // Đảm bảo sử dụng đúng thuộc tính 'items'
+                            menu={{ items: itemsDrop }}
                             trigger={['click', 'hover']} >
                             <img src={user?.avatar} className="w-10 h-10 rounded-full"></img>
                         </Dropdown>
@@ -287,7 +288,7 @@ const Layout = () => {
 
             }
             <div>
-                <Outlet context={{setVisible}}/>
+                <Outlet context={{ setVisible, listRoutes }} />
             </div>
         </div>
     )

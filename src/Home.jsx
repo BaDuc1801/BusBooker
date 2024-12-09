@@ -1,27 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import ListRoutes from './ListRoutes.jsx';
+import React from 'react'
+import ListRoutes from './RouteDetail/ListRoutes.jsx';
 import ListVoucher from './ListVoucher.jsx';
 import ListBestComment from './ListBestComment.jsx';
 import Flexin from './Flexin.jsx';
 import Footer from './Footer.jsx';
-// import Search from './Search.jsx';
-import axios from 'axios';
+import { useOutletContext } from 'react-router-dom';
 
 const Home = () => {
-    const beUrl = import.meta.env.VITE_APP_BE_URL;
-    const [listRoutes, setListRoutes] = useState([]);
+    const {listRoutes} = useOutletContext();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const list = await axios.get(`${beUrl}/routes`);    
-            setListRoutes(list.data);
-        }
-        fetchData()
-    }, [])
-    
     return (
-        <div  className="max-md:mb-[100px]">
-            {/* <Search listRoutes={listRoutes}/> */}
+        <div className="max-md:mb-[100px]">
             <ListRoutes listRoutes={listRoutes}/>
             <ListVoucher />
             <ListBestComment />

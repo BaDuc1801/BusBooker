@@ -7,11 +7,10 @@ import { useOutletContext } from 'react-router-dom'
 const UserStorage = () => {
     const {user} = useContext(UserContext);
     const {setVisible} = useOutletContext();
-    useEffect(() => {
-        // Hide div when navigating to this page
-        setVisible(true); // Show the div when the page is active
+    useEffect   (() => {
+        setVisible(true); 
         return () => {
-          setVisible(false); // Hide div when navigating away
+          setVisible(false); 
         };
       }, [setVisible]);
     return (

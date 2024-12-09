@@ -6,7 +6,7 @@ import Register from "./Login/Register.jsx"
 import ForgotPass from "./Login/ForgotPass.jsx"
 import UserStorage from "./UserStorage.jsx"
 import RegisterSale from "./RegisterSale.jsx"
-import RouteDetail from "./RouteDetail.jsx"
+import RouteDetail from "./RouteDetail/RouteDetail.jsx"
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         <Route path="" element={<Home/>}/>
         <Route path="/my-storage" element={<UserStorage/>}/>
         <Route path="/register-sale" element={<RegisterSale/>}/>
-        <Route path="/route-details/:id" element={<RouteDetail/>}/>
+        <Route path="/route-details" element={<RouteDetail/>}/>
       </Route>
       <Route path="/login" element={<Login/>}/>
       <Route path="/register" element={<Register/>}/>

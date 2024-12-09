@@ -1,5 +1,6 @@
 import { Button, Col, Form, Input, Row } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useOutletContext } from 'react-router-dom';
 
 const RegisterSale = () => {
     const { form } = Form.useForm();
@@ -7,6 +8,14 @@ const RegisterSale = () => {
     const onFinish = (value) => {
         console.log(value)
     }
+
+    const { setVisible } = useOutletContext();
+    useEffect(() => {
+        setVisible(true);
+        return () => {
+            setVisible(false);
+        };
+    }, [setVisible]);
 
     return (
         <div className='bg-blue-100 h-[calc(100vh-72px)] flex'>
