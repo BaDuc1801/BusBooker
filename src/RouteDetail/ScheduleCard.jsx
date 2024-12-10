@@ -1,68 +1,219 @@
-import { Timeline } from 'antd';
-import React from 'react'
-import { FaCircleDot, FaLocationDot } from 'react-icons/fa6';
+import { Button, Carousel, Modal, Timeline } from 'antd'
+import React, { useState } from 'react'
+import { FaCircleDot, FaLocationDot } from 'react-icons/fa6'
+import { PiArmchairFill } from 'react-icons/pi'
+import { TbArmchair2, TbArmchair2Off } from 'react-icons/tb'
+import SeatMap from './SeatMap'
 
 const ScheduleCard = ({ item }) => {
-    const formattedDate = (date) => {
-        const getDate = new Date(date);
-        return getDate.toLocaleDateString('vi-VN');
+  const formattedDate = date => {
+    const getDate = new Date(date)
+    return getDate.toLocaleDateString('vi-VN')
+  }
+
+  const formattedTime = (date) => {
+    const getDate = new Date(date); 
+    const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' };
+    const rs = getDate.toLocaleTimeString('vi-VN', options);
+    return rs
+  }
+
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [visible, setVisible] = useState(false)
+  const [more, setMore] = useState(false)
+
+  const toggleModal = () => {
+    setVisible(prevVisible => !prevVisible)
+  }
+
+  const onClickButton = () => {
+    setMore(pre => !pre)
+  }
+
+  const handleImageClick = index => {
+    setSelectedImageIndex(index)
+  }
+
+  const [selectedSeats, setSelectedSeats] = useState([]);
+
+  const handleSeatClick = (seatNumber) => {
+    setSelectedSeats(prevSelectedSeats => {
+      const updatedSeats = prevSelectedSeats.includes(seatNumber)
+        ? prevSelectedSeats.filter(seat => seat !== seatNumber)
+        : [...prevSelectedSeats, seatNumber];
+
+      return updatedSeats.sort((a, b) => {
+        const numA = parseInt(a.slice(1), 10);
+        const numB = parseInt(b.slice(1), 10);
+        return numA - numB;
+      });
+    });
+  };
+
+  const calculateTotalPrice = () => {
+    return selectedSeats.reduce((total, seatNumber) => {
+      const seat = item?.seats.find(seat => seat.seatNumber === seatNumber);
+      return seat ? total + seat.price : total;
+    }, 0);
+  };
+
+  const totalPrice = calculateTotalPrice();
+
+  const [warning, setWarning] = useState(false)
+
+  const onClickNext = () => {
+    if (selectedSeats.length === 0) {
+      setWarning(pre => !pre);
     }
-    // const beUrl = import.meta.env.VITE_APP_BE_URL;
-
-    // useEffect(() => {
-
-    //     const fetchData = async () => {
-    //         let url = `${beUrl}/routes/find-schedule?origin=${originChoice}&destination=${destiChoice}`;
-
-    //         if (startTime) {
-    //             url += `&startTime=${startTime}`;
-    //         }
-    //         const data = await axios.get(url)
-    //         setRoute(data.data)
-    //     }
-    //     fetchData();
-
-    // }, [startTime, destiChoice, originChoice])
-    const formattedTime = (date) => {
-        const getDate = new Date(date);
-        const hours = getDate.getHours();
-        const minutes = getDate.getMinutes();
-        const rs = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-        return rs;
-    }
-
-    return (
-        <div className='bg-white flex gap-5 px-3 pt-3 rounded-md shadow-md'>
-            <img src={item?.busId?.img[3]} className='w-40 h-40'></img>
-            <div className='font-semibold'>
-                <p className='text-lg'>{item?.busId?.owner}</p>
-                <p className='text-gray-600'>Limousine {item?.busId?.totalSeats} chỗ </p>
-                <p className='text-gray-600 my-2'>{formattedDate(item?.startTime)}</p>
-                <Timeline
-                    items={[
-                        {
-                            children: <p className='text-lg'>{formattedTime(item?.startTime)}</p>,
-                            dot: <FaCircleDot  className='text-md mt-1'/>
-                        },
-                        {
-                            children: <p  className='text-lg'>{formattedTime(item?.endTime)}</p>,
-                            dot: <FaLocationDot className='text-lg mt-1'/>
-                        },
-                    ]}
-                />
-            </div>
-            <div className='flex justify-between flex-col mb-12 items-end'>
-                <p className='text-[#1677ff] font-bold text-xl'>Từ {item?.busId?.seats[0]?.price.toLocaleString()}đ</p>
-                <div className='flex flex-col items-end gap-2'>
-                    <p className='font-semibold text-gray-600'>Còn {item?.busId?.availableSeats} chỗ trống</p>
-                    <div className='flex gap-4 items-center'>
-                        <p className='text-[#1677ff] cursor-pointer underline'>Thông tin chi tiết</p>
-                        <button className='bg-yellow-400 hover:bg-yellow-300 font-semibold p-2 rounded-md text-md'>Chọn chuyến</button>
-                    </div>
-                </div>
-            </div>
+  }
+  console.log(item?.startTime);
+  console.log(formattedTime(item?.startTime))
+  return (
+    <div className='bg-white rounded-md shadow-md px-3'>
+      <div className='flex gap-5 pt-3'>
+        <img
+          src={item?.busId?.img[3]}
+          className='w-40 h-40'
+          onClick={toggleModal}
+        ></img>
+        <div className='font-semibold'>
+          <p className='text-lg'>{item?.busId?.owner}</p>
+          <p className='text-gray-600'>
+            Limousine {item?.busId?.totalSeats} chỗ{' '}
+          </p>
+          <p className='text-gray-600 my-2'>{formattedDate(item?.startTime)}</p>
+          <Timeline
+            items={[
+              {
+                children: (
+                  <p className='text-lg'>{formattedTime(item?.startTime)}</p>
+                ),
+                dot: <FaCircleDot className='text-md mt-1' />
+              },
+              {
+                children: (
+                  <p className='text-lg'>{formattedTime(item?.endTime)}</p>
+                ),
+                dot: <FaLocationDot className='text-lg mt-1' />
+              }
+            ]}
+          />
         </div>
-    )
+        <div className='flex justify-between flex-col mb-12 items-end'>
+          <p className='text-[#1677ff] font-bold text-xl'>
+            Từ {item?.seats[0]?.price.toLocaleString()}đ
+          </p>
+          <div className='flex flex-col items-end gap-2'>
+            <p className='font-semibold text-gray-600'>
+              Còn {item?.availableSeats} chỗ trống
+            </p>
+            <div className='flex gap-4 items-center'>
+              <p className='text-[#1677ff] cursor-pointer underline'>
+                Thông tin chi tiết
+              </p>
+              <button
+                className={`font-semibold p-2 rounded-md text-md w-[115px] ${!more
+                  ? 'bg-yellow-400 hover:bg-yellow-300'
+                  : 'bg-gray-400 hover:bg-gray-300'
+                  }`}
+                onClick={onClickButton}
+              >
+                {!more ? 'Chọn chuyến' : 'Hủy'}
+              </button>
+            </div>
+          </div>
+        </div>
+        <Modal open={visible} onCancel={toggleModal} footer={null}>
+          <div className='h-[320px]'>
+            <img
+              src={item?.busId?.img[selectedImageIndex]}
+              className='w-full h-full'
+            />
+          </div>
+          <Carousel
+            dots={false}
+            arrows
+            infinite={false}
+            slidesToShow={3}
+            slidesToScroll={1}
+          >
+            {item?.busId?.img.map((image, index) => (
+              <div
+                className='h-36 p-2 mt-2 '
+                onClick={() => handleImageClick(index)}
+              >
+                <img
+                  className={`w-full h-full ${selectedImageIndex === index
+                    ? 'border-4 border-blue-500'
+                    : ''
+                    }`}
+                  key={index}
+                  src={image}
+                />
+              </div>
+            ))}
+          </Carousel>
+        </Modal>
+      </div>
+      {more && (
+        <>
+          <div className='border-t-2 flex items-center justify-between'>
+            <div className='flex flex-col gap-3 pb-5 px-5 pt-2'>
+              <p>Chú thích</p>
+              <div className='flex items-center gap-3'>
+                <TbArmchair2Off className='text-3xl text-gray-600' /> Ghế không bán
+              </div>
+              <div className='flex items-center gap-3'>
+                <PiArmchairFill className='text-3xl text-green-500' /> Đang chọn
+              </div>
+              <div className='flex items-center gap-3'>
+                <TbArmchair2 className='text-3xl text-green-400' />
+                <div>
+                  <p>Ghế đầu</p>{' '}
+                  <p className='font-semibold'>{item?.seats[0]?.price}</p>
+                </div>
+              </div>
+              <div className='flex items-center gap-3'>
+                <TbArmchair2 className='text-3xl text-orange-400' />
+                <div>
+                  <p>Ghế giữa</p>{' '}
+                  <p className='font-semibold'>{item?.seats[4]?.price}</p>
+                </div>
+              </div>
+              <div className='flex items-center gap-3'>
+                <TbArmchair2 className='text-3xl text-purple-400' />
+                <div>
+                  <p>Ghế cuối</p>{' '}
+                  <p className='font-semibold'>
+                    {item?.seats[item?.seats.length - 1]?.price}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <SeatMap seats={item?.seats} handleSeatClick={handleSeatClick} />
+            </div>
+          </div>
+          <div className='border-t-2 flex items-center justify-between py-5'>
+            <p>Ghế: <span className='text-[#1677ff] font-bold'>{selectedSeats.join(', ')}</span></p>
+            <div className='flex items-center gap-3'>
+              <p>Tổng cộng: <span className='text-[#1677ff] font-bold'>{totalPrice.toLocaleString()}đ</span></p>
+              <button className='bg-[#1677ff] text-white py-2 px-3 rounded-md hover:bg-blue-500' onClick={onClickNext}>Tiếp tục</button>
+            </div>
+            <Modal
+              open={warning} onCancel={onClickNext} centered
+              footer={
+                <Button onClick={onClickNext} type="primary" className='w-full font-semibold bg-yellow-400 text-black hover:!bg-yellow-300 hover:!text-black'>
+                  Đã hiểu
+                </Button>
+              }>
+              <p className='font-bold text-lg text-center'>Vui lòng chọn ít nhất 1 chỗ ngồi</p>
+            </Modal>
+          </div>
+        </>
+      )}
+    </div>
+  )
 }
 
 export default ScheduleCard

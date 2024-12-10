@@ -4,12 +4,11 @@ import { UserContext } from '../Context/UserContext';
 
 const ListRoutes = ({ listRoutes }) => {
     const nav = useNavigate(); 
-    const {setOriginChoice, setDestiChoice} = useContext(UserContext);
 
     const handleClick = (item) => {
         nav(`/route-details`);
-        setOriginChoice(item.origin);
-        setDestiChoice(item.destination);
+        localStorage.setItem('originChoice', item.origin); 
+        localStorage.setItem('destiChoice', item.destination);
     };
 
     return (

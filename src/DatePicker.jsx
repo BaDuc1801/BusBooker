@@ -5,7 +5,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { FaCircleDot, FaLocationDot } from 'react-icons/fa6';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import { UserContext } from './Context/UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 dayjs.extend(customParseFormat);
 
 const DatePickerSpace = (props) => {
@@ -14,34 +14,37 @@ const DatePickerSpace = (props) => {
     const nav = useNavigate()
     const [originLocation, setOriginLocation] = useState(null);
     const [destinationLocation, setDestinationLocation] = useState(null);
-    const [selectedDates, setSelectedDates] = useState(null);
+    const [selectedDates, setSelectedDates] = useState("");
 
-    const { originChoice, destiChoice,  setOriginChoice, setDestiChoice, setStartTime} = useContext(UserContext)
-    const [originUI, setOriginUI] = useState(originChoice)
-    const [destiUI, setDestiUI] = useState(destiChoice)
+    const [originUI, setOriginUI] = useState(localStorage.getItem('originChoice'))
+    const [destiUI, setDestiUI] = useState(localStorage.getItem('destiChoice'))
 
     const handleOriginChange = (value) => {
         setOriginLocation(value);
         setOriginUI(value);
-        setOriginChoice(value);
+        localStorage.setItem('originChoice', value); 
     };
 
     const handleDestinationChange = (value) => {
         setDestinationLocation(value);
         setDestiUI(value);
-        setDestiChoice(value);
+        localStorage.setItem('destiChoice', value);
     };
+
 
     const handleDateChange = (_dates, dateStrings) => {
         setSelectedDates(dateStrings)
     };
 
     const handleSearch = () => {
-        setOriginChoice(originChoice);
-        setDestiChoice(destiChoice);
-        setStartTime(selectedDates);
-        console.log(originChoice, destiChoice)
-        nav('/route-details')
+        if (Array.isArray(selectedDates) && selectedDates.length === 2) {
+            localStorage.setItem('startTime', selectedDates[0]);
+            localStorage.setItem('endTime', selectedDates[1]);
+        } else {
+            localStorage.setItem('startTime', selectedDates)
+            localStorage.setItem('endTime', "")
+        }
+        nav('/route-details');
     };
 
     const getUniqueOrigins = listRoutes && listRoutes.reduce((acc, route) => {
@@ -55,10 +58,17 @@ const DatePickerSpace = (props) => {
         return current && current < dayjs().endOf('day');
     };
 
-    useEffect(() => {
-        setOriginUI(originChoice)
-        setDestiUI(destiChoice)
-    }, [originChoice, destiChoice])
+    const storedOrigin = localStorage.getItem('originChoice');
+    const storedDestination = localStorage.getItem('destiChoice');
+
+    useEffect(() => {    
+        if (storedOrigin) {
+            setOriginUI(storedOrigin);
+        }
+        if (storedDestination) {
+            setDestiUI(storedDestination);
+        }
+    }, [storedOrigin, storedDestination]);
 
     return (
         <div className='grid grid-cols-1 md:grid-cols-[2fr_2fr_3fr_1fr] gap-4'>
