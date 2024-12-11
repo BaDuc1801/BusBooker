@@ -7,6 +7,7 @@ import ForgotPass from "./Login/ForgotPass.jsx"
 import UserStorage from "./UserStorage.jsx"
 import RegisterSale from "./RegisterSale.jsx"
 import RouteDetail from "./RouteDetail/RouteDetail.jsx"
+import Payment from "./Payment.jsx"
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/my-storage" element={<UserStorage/>}/>
         <Route path="/register-sale" element={<RegisterSale/>}/>
         <Route path="/route-details" element={<RouteDetail/>}/>
+        <Route path="/payment" element={<Payment/>}/>
       </Route>
       <Route path="/login" element={<Login/>}/>
       <Route path="/register" element={<Register/>}/>

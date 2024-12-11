@@ -1,29 +1,30 @@
 import { Button, Carousel, Modal, Timeline } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaCircleDot, FaLocationDot } from 'react-icons/fa6'
 import { PiArmchairFill } from 'react-icons/pi'
 import { TbArmchair2, TbArmchair2Off } from 'react-icons/tb'
 import SeatMap from './SeatMap'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 
-const ScheduleCard = ({ item }) => {
+const ScheduleCard = ({ item, setText, endTime }) => {
   const formattedDate = date => {
     const getDate = new Date(date)
     return getDate.toLocaleDateString('vi-VN')
   }
 
   const formattedTime = (date) => {
-    const getDate = new Date(date); 
+    const getDate = new Date(date);
     const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' };
     const rs = getDate.toLocaleTimeString('vi-VN', options);
     return rs
   }
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisiblee] = useState(false)
   const [more, setMore] = useState(false)
 
   const toggleModal = () => {
-    setVisible(prevVisible => !prevVisible)
+    setVisiblee(prevVisible => !prevVisible)
   }
 
   const onClickButton = () => {
@@ -60,14 +61,53 @@ const ScheduleCard = ({ item }) => {
   const totalPrice = calculateTotalPrice();
 
   const [warning, setWarning] = useState(false)
+  const nav = useNavigate()
+  const { setVisible } = useOutletContext();
+  const [clickCount, setClickCount] = useState(0); // Thêm biến trạng thái để đếm số lần nhấn
 
   const onClickNext = () => {
     if (selectedSeats.length === 0) {
       setWarning(pre => !pre);
+      return;
     }
-  }
-  console.log(item?.startTime);
-  console.log(formattedTime(item?.startTime))
+    setClickCount(prevCount => prevCount + 1);
+    if (endTime === "") {
+      setVisible(true);
+      window.localStorage.setItem('Chiều đi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
+      nav("/payment");
+    } else {
+      const originChoice = localStorage.getItem("originChoice");
+      const destiChoice = localStorage.getItem("destiChoice");
+
+      if (originChoice && destiChoice) {
+        localStorage.setItem("originChoice", destiChoice);
+        localStorage.setItem("destiChoice", originChoice);
+      }
+
+      localStorage.setItem("startTime", endTime);
+      setMore(pre => !pre);
+      setText("Chiều về");
+      setSelectedSeats([]);
+      if (clickCount === 0) {
+        window.localStorage.setItem('chieuDi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
+        window.localStorage.setItem('giaChieuDi', totalPrice)
+      }
+      if (clickCount === 1) {
+        localStorage.setItem('chieuVe', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
+        window.localStorage.setItem('giaChieuVe', totalPrice)
+        nav('/payment');
+        return
+      }
+      nav("/route-details");
+    }
+  };
+
+  useEffect(() => {
+    if (location.pathname !== "/payment") {
+      setVisible(false);
+    }
+  }, [location.pathname]);
+
   return (
     <div className='bg-white rounded-md shadow-md px-3'>
       <div className='flex gap-5 pt-3'>

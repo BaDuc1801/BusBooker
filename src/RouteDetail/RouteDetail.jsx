@@ -26,14 +26,16 @@ const RouteDetail = () => {
         fetchData();
     }, [location])
 
+    const [text, setText] = useState("Chiều đi");
+
     return (
-        <div className="max-md:mb-[100px] py-5 flex items-center justify-center flex-col gap-5 bg-[#F2F4F7]">
-            {endTime && <p>Chiều đi</p>}
+        <div className="max-md:mb-[60px] pb-12 pt-5 flex items-center justify-center flex-col gap-5 bg-[#F2F4F7]">
+            {endTime && <p>{text}</p>}
             <p className='text-xl'>Có <span className='font-bold'>{route[0]?.schedules?.length}</span> chuyến xe đi từ <span className='font-bold'>{route[0]?.origin}</span> đến <span className='font-bold'>{route[0]?.destination}</span></p>
             {
                 route.length > 0 && route[0]?.schedules.map((item, index) => {
                     return (
-                        <ScheduleCard item={item} key={index} />
+                        <ScheduleCard item={item} key={index} setText={setText} endTime={endTime}/>
                     )
                 })
             }

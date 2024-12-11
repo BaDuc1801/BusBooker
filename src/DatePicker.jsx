@@ -1,11 +1,11 @@
 import { DatePicker, Select } from 'antd'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { FaCircleDot, FaLocationDot } from 'react-icons/fa6';
 import { FaRegCalendarAlt } from 'react-icons/fa';
-import { UserContext } from './Context/UserContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 dayjs.extend(customParseFormat);
 
 const DatePickerSpace = (props) => {
@@ -14,15 +14,25 @@ const DatePickerSpace = (props) => {
     const nav = useNavigate()
     const [originLocation, setOriginLocation] = useState(null);
     const [destinationLocation, setDestinationLocation] = useState(null);
-    const [selectedDates, setSelectedDates] = useState("");
+    const defaultDate = dayjs().add(1, 'day');
 
-    const [originUI, setOriginUI] = useState(localStorage.getItem('originChoice'))
-    const [destiUI, setDestiUI] = useState(localStorage.getItem('destiChoice'))
+    const formattedDate = (date) => {
+        const getDate = new Date(date);
+        const year = getDate.getFullYear();
+        const month = String(getDate.getMonth() + 1).padStart(2, '0'); 
+        const day = String(getDate.getDate()).padStart(2, '0'); 
+    
+        return `${year}-${month}-${day}`; 
+    };
+    const [selectedDates, setSelectedDates] = useState(formattedDate(defaultDate));
+
+    const [originUI, setOriginUI] = useState()
+    const [destiUI, setDestiUI] = useState()
 
     const handleOriginChange = (value) => {
         setOriginLocation(value);
         setOriginUI(value);
-        localStorage.setItem('originChoice', value); 
+        localStorage.setItem('originChoice', value);
     };
 
     const handleDestinationChange = (value) => {
@@ -32,12 +42,16 @@ const DatePickerSpace = (props) => {
     };
 
 
-    const handleDateChange = (_dates, dateStrings) => {
+    const handleDateChange1 = (_dates, dateStrings) => {
+        setSelectedDates(dateStrings)
+    };
+
+    const handleDateChange2 = (_dates, dateStrings) => {
         setSelectedDates(dateStrings)
     };
 
     const handleSearch = () => {
-        if (Array.isArray(selectedDates) && selectedDates.length === 2) {
+        if (Array.isArray(selectedDates)) {
             localStorage.setItem('startTime', selectedDates[0]);
             localStorage.setItem('endTime', selectedDates[1]);
         } else {
@@ -61,7 +75,7 @@ const DatePickerSpace = (props) => {
     const storedOrigin = localStorage.getItem('originChoice');
     const storedDestination = localStorage.getItem('destiChoice');
 
-    useEffect(() => {    
+    useEffect(() => {
         if (storedOrigin) {
             setOriginUI(storedOrigin);
         }
@@ -124,16 +138,16 @@ const DatePickerSpace = (props) => {
                     <div className='flex flex-col gap-2'>
                         <p className='flex items-center gap-2 font-semibold'><FaRegCalendarAlt className='text-blue-600' />Ngày đi</p>
                         <DatePicker size='large'
-                            className='flex-1' disabledDate={disabledDate}
-                            onChange={handleDateChange}
+                            className='flex-1' disabledDate={disabledDate} defaultValue={defaultDate}
+                            onChange={handleDateChange1}
                         />
                     </div>
                     :
                     <div className='flex flex-col gap-2'>
                         <p className='flex items-center gap-2 font-semibold'><FaRegCalendarAlt className='text-blue-600' />Ngày đi và về</p>
                         <RangePicker size='large'
-                            className='flex-1' disabledDate={disabledDate}
-                            onChange={handleDateChange}
+                            className='flex-1' disabledDate={disabledDate} defaultValue={[defaultDate, defaultDate.add(1, 'day')]} 
+                            onChange={handleDateChange2}
                         />
                     </div>
             }

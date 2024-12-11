@@ -10,11 +10,13 @@ const Home = () => {
     const { listRoutes } = useOutletContext();
 
     useEffect(() => {
-        // localStorage.removeItem('originChoice');
-        // localStorage.removeItem('destiChoice');
         localStorage.removeItem('startTime');
         localStorage.removeItem('endTime');
-    },[])
+        localStorage.removeItem("chieuDi");
+        localStorage.removeItem("giaChieuDi");
+        localStorage.removeItem("chieuDi");
+        localStorage.removeItem("giaChieuDi");
+    }, [])
 
     return (
         <div className="max-md:mb-[100px]">

@@ -51,14 +51,8 @@ const UserProvider = ({ children }) => {
         }
     };
 
-    // context lưu giá trị địa điểm đã chọn 
-    const [originChoice, setOriginChoice] = useState(null)
-    const [destiChoice, setDestiChoice] = useState(null)
-    const [startTime, setStartTime] = useState(null)
-    const [endTime, setEndTime] = useState(null)
-
     return (
-        <UserContext.Provider value={{ user, authenticated, login, logout, originChoice, setOriginChoice, destiChoice, setDestiChoice, startTime, setStartTime, endTime, setEndTime }}>
+        <UserContext.Provider value={{ user, authenticated, login, logout }}>
             {children}
         </UserContext.Provider>
     );
