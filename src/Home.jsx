@@ -14,8 +14,8 @@ const Home = () => {
         localStorage.removeItem('endTime');
         localStorage.removeItem("chieuDi");
         localStorage.removeItem("giaChieuDi");
-        localStorage.removeItem("chieuDi");
-        localStorage.removeItem("giaChieuDi");
+        localStorage.removeItem("chieuVe");
+        localStorage.removeItem("giaChieuVe");
     }, [])
 
     return (

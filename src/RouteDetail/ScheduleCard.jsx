@@ -63,7 +63,7 @@ const ScheduleCard = ({ item, setText, endTime }) => {
   const [warning, setWarning] = useState(false)
   const nav = useNavigate()
   const { setVisible } = useOutletContext();
-  const [clickCount, setClickCount] = useState(0); // Thêm biến trạng thái để đếm số lần nhấn
+  const [clickCount, setClickCount] = useState(0);
 
   const onClickNext = () => {
     if (selectedSeats.length === 0) {
@@ -73,7 +73,8 @@ const ScheduleCard = ({ item, setText, endTime }) => {
     setClickCount(prevCount => prevCount + 1);
     if (endTime === "") {
       setVisible(true);
-      window.localStorage.setItem('Chiều đi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
+      localStorage.setItem('chieuDi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
+      localStorage.setItem('giaChieuDi', totalPrice)
       nav("/payment");
     } else {
       const originChoice = localStorage.getItem("originChoice");

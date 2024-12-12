@@ -1,51 +1,26 @@
-import { Button, Radio, Divider, Input, Form } from 'antd';
+import { Button, Radio, Input, Form } from 'antd';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { BsShieldFillCheck } from 'react-icons/bs';
+import { RiDiscountPercentFill } from 'react-icons/ri';
 import { Link, useLocation, useOutletContext } from 'react-router-dom';
 
 const Payment = () => {
     const { setVisible } = useOutletContext();
     const location = useLocation()
-    const data = [
-        {
-            code: "DISCOUNT10",
-            discount: 10,
-            discountType: "percent",
-            expiryDate: "2024-12-31T23:59:59.000Z",
-            description: "Giảm giá 10% cho tất cả chuyến đi.",
-            createdBy: "60f1fc1e2f479b001f1e9bd6"
-        },
-        {
-            code: "DISCOUNT20",
-            discount: 20,
-            discountType: "percent",
-            expiryDate: "2024-06-30T23:59:59.000Z",
-            description: "Giảm giá 20% cho tất cả chuyến đi.",
-            createdBy: "60f1fc1e2f479b001f1e9bd6"
-        },
-        {
-            code: "CODELORD",
-            discount: 50000,
-            discountType: "fixed",
-            expiryDate: "2024-12-31T23:59:59.000Z",
-            description: "Giảm 50.000đ cho chuyến đi.",
-            createdBy: "60f1fc1e2f479b001f1e9bd6"
-        },
-        {
-            code: "DISCOUNT20K",
-            discount: 20000,
-            discountType: "fixed",
-            expiryDate: "2024-12-31T23:59:59.000Z",
-            description: "Giảm 20.000đ cho chuyến đi.",
-            createdBy: "60f1fc1e2f479b001f1e9bd6"
-        }
-    ]
+    const beUrl = import.meta.env.VITE_APP_BE_URL;
+    const [listVoucher, setListVoucher] = useState([])
 
     useEffect(() => {
         if (location.pathname !== "/payment") {
             setVisible(false);
         } else {
             setVisible(true);
+            const fetchData = async () => {
+                const data = await axios.get(`${beUrl}/vouchers`);
+                setListVoucher(data.data);
+            }
+            fetchData()
         }
         return () => {
             setVisible(false);
@@ -77,32 +52,30 @@ const Payment = () => {
     const { form } = Form.useForm();
 
     const onFinish = (value) => {
-        console.log(value)
+        console.log([value, { voucher: selectedVoucher?.code }])
     }
-    // const [vouchers, setVouchers] = useState([]);
-    //   const [selectedVoucher, setSelectedVoucher] = useState(null);
+
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
     const [total, setTotalPrice] = useState(totalPrice);
-    // const applyVoucher = (voucher) => {
-    //     if (!voucher) return; // Nếu không có voucher, không làm gì cả
 
-    //     let newTotal = totalPrice;
+    const applyVoucher = (voucher) => {
+        if (!voucher) return;
 
-    //     // Nếu voucher là giảm giá phần trăm
-    //     if (voucher.discountType === 'percent') {
-    //         newTotal -= (newTotal * (voucher.discount / 100));
-    //     }
+        let newTotal = totalPrice;
 
-    //     // Nếu voucher là giảm giá cố định
-    //     if (voucher.discountType === 'fixed') {
-    //         newTotal -= voucher.discount;
-    //     }
+        if (voucher.discountType === 'percent') {
+            newTotal -= (newTotal * (voucher.discount / 100));
+        }
 
-    //     // Đảm bảo tổng tiền không âm
-    //     if (newTotal < 0) newTotal = 0;
+        if (voucher.discountType === 'fixed') {
+            newTotal -= voucher.discount;
+        }
 
-    //     setSelectedVoucher(voucher);
-    //     setTotalPrice(newTotal); // Cập nhật tổng tiền
-    // };
+        if (newTotal < 0) newTotal = 0;
+
+        setSelectedVoucher(voucher);
+        setTotalPrice(newTotal);
+    };
 
     return (
         <div className='bg-[#F2F4F7] flex justify-center gap-10 pt-10 max-md:flex-col-reverse max-md:pb-[100px] max-md:gap-3 max-md:pt-3 max-md:px-3 md:pb-[50px]'>
@@ -145,7 +118,7 @@ const Payment = () => {
                         </Form.Item>
                         <Form.Item
                             label="Số điện thoại"
-                            name="email"
+                            name="phoneNumber"
                             rules={[
                                 {
                                     required: true,
@@ -190,12 +163,12 @@ const Payment = () => {
                 <div>
                     <p className='text-lg'>Chiều đi: </p>
                     <div className='pl-4'>
-                        <p>Thời gian: {formattedDate(chieuDi.startTime)} - {formattedTime(chieuDi.startTime)}</p>
+                        <p>Thời gian: {formattedDate(chieuDi?.startTime)} - {formattedTime(chieuDi?.startTime)}</p>
                         <p>Địa điểm: {originChoice}</p>
-                        <p>Xe: {chieuDi.licensePlate}</p>
-                        <p>Loại xe: {chieuDi.totalSeats} chỗ</p>
-                        <p>Số ghế: {chieuDi.seatNumber.join(', ')}</p>
-                        <p className='font-semibold '>Tổng:<span className='text-blue-500 ml-2'>{giaChieuDi.toLocaleString()}đ</span> </p>
+                        <p>Xe: {chieuDi?.licensePlate}</p>
+                        <p>Loại xe: {chieuDi?.totalSeats} chỗ</p>
+                        <p>Số ghế: {chieuDi?.seatNumber.join(', ')}</p>
+                        <p className='font-semibold '>Tổng:<span className='text-blue-500 ml-2'>{giaChieuDi?.toLocaleString()}đ</span> </p>
                     </div>
                 </div>
                 {
@@ -203,7 +176,7 @@ const Payment = () => {
                         <div>
                             <p className='text-xl'>Chiều về: </p>
                             <div className='pl-4'>
-                                <p>Thời gian: {formattedDate(chieuVe.startTime)} - {formattedTime(chieuVe.startTime)}</p>
+                                <p>Thời gian: {formattedDate(chieuVe?.startTime)} - {formattedTime(chieuVe?.startTime)}</p>
                                 <p>Địa điểm: {destiChoice}</p>
                                 <p>Xe: {chieuVe.licensePlate}</p>
                                 <p>Loại xe: {chieuVe.totalSeats} chỗ</p>
@@ -213,12 +186,47 @@ const Payment = () => {
                         </div>
                     )
                 }
-                <div className='border-t-2 py-2 flex items-center justify-between'>
-                    <p className='font-semibold'>Tổng cộng:</p>
-                    <p className='text-blue-500 font-semibold text-xl'>{total.toLocaleString()}đ</p>
+                <div>
+                    <div className='border-t-2 py-2 flex items-center justify-between'>
+                        <p className='font-semibold'>Tổng tiền:</p>
+                        <p className='text-blue-500 font-semibold text-lg'>{totalPrice.toLocaleString()}đ</p>
+                    </div>
+                    <div className='border-t-2 py-2 flex items-center justify-between'>
+                        <p className='font-semibold'>Mã áp dụng:</p>
+                        <p className='font-semibold'>{selectedVoucher?.code}</p>
+                    </div>
+                    <div className='border-t-2 py-2 flex items-center justify-between'>
+                        <p className='font-semibold'>Tổng tiền:</p>
+                        <p className='text-blue-500 font-semibold text-xl'>{total.toLocaleString()}đ</p>
+                    </div>
+                </div>
+                <div>
+                    <p className='text-xl font-semibold border-t-2 pt-2'>Danh sách khuyến mãi</p>
+                    <div className="flex overflow-x-auto whitespace-nowrap gap-4 p-4 snap-x snap-mandatory">
+                        {listVoucher && listVoucher.map((item, index) => {
+                            return (
+                                <div key={index} className={`border-2 rounded-md shadow-md p-1 cursor-pointer ${selectedVoucher === item
+                                    ? 'border-4 border-blue-500'
+                                    : ''
+                                    }`}
+                                    onClick={() => applyVoucher(item)}>
+                                    <div className="flex items-center justify-center h-full">
+                                        <div className='bg-[#fef32a] w-[70px] h-full rounded-md flex items-center justify-center'>
+                                            <RiDiscountPercentFill className='text-4xl' />
+                                        </div>
+                                        <div className='text-sm pl-2 pr-1'>
+                                            <p className='text-blue-600 font-semibold'>Thanh toán</p>
+                                            <p className='font-bold text-md'>{item.name}</p>
+                                            <p>HSD: <span className='font-semibold'>{formattedDate(item.expiryDate)}</span> </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }
 
