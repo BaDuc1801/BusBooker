@@ -1,13 +1,23 @@
-import React, { useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../Context/UserContext';
+import axios from 'axios';
 
-const ListRoutes = ({ listRoutes }) => {
-    const nav = useNavigate(); 
+const ListRoutes = () => {
+    const nav = useNavigate();
+    const [listRoutes, setListRoutes] = useState([]);
+    const beUrl = import.meta.env.VITE_APP_BE_URL;
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            const list = await axios.get(`${beUrl}/routes`);
+            setListRoutes(list.data);
+        }
+        fetchData()
+    }, [])
 
     const handleClick = (item) => {
         nav(`/route-details`);
-        localStorage.setItem('originChoice', item.origin); 
+        localStorage.setItem('originChoice', item.origin);
         localStorage.setItem('destiChoice', item.destination);
     };
 

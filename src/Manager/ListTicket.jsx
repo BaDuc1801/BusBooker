@@ -1,13 +1,11 @@
-import { Button, Modal, Table, Tabs } from 'antd'
+import { Button, Input, Modal, Table, Tabs } from 'antd'
 import Item from 'antd/es/list/Item'
-import React, { useContext, useEffect, useState } from 'react'
-import { UserContext } from './Context/UserContext'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { IoInformationCircle } from 'react-icons/io5'
 import { FiXCircle } from 'react-icons/fi'
 
-const UserStorage = () => {
-    const { user } = useContext(UserContext);
+const ListTicket = () => {
     const beUrl = import.meta.env.VITE_APP_BE_URL;
     const [listTicket, setListTicket] = useState([]);
 
@@ -17,7 +15,7 @@ const UserStorage = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await axios.get(`${beUrl}/tickets/userId/${user?._id}`)
+            const data = await axios.get(`${beUrl}/tickets/all`)
             setListTicket(data.data);
         }
         fetchData()
@@ -67,9 +65,33 @@ const UserStorage = () => {
             // width: 300
         },
         {
+            title: "Tên khách",
+            dataIndex: 'username',
+            key: 'username',
+            render: (text) => {
+                return <p>{text}</p>
+            }
+        },
+        {
+            title: "Email",
+            dataIndex: 'email',
+            key: 'email',
+            render: (text) => {
+                return <p>{text}</p>
+            }
+        },
+        {
+            title: "Số điện thoại",
+            dataIndex: 'phoneNumber',
+            key: 'phoneNumber',
+            render: (text) => {
+                return <p>{text}</p>
+            }
+        },
+        {
             title: 'Loại Vé',
             dataIndex: 'returnTrip',
-            key: 'address',
+            key: 'returnTrip',
             render: (text) => {
                 if (text.seatNumbers.length === 0) {
                     return <span>1 chiều</span>;
@@ -115,18 +137,17 @@ const UserStorage = () => {
         ...(activeTab === '1' ? [{
             title: 'Hủy vé',
             dataIndex: 'status',
-            render: (text, record) =>
-                text === 'waiting' ? (
-                    <p
-                        className="cursor-pointer text-xl text-red-500"
-                        onClick={() => {
-                            setSelectedTicket(record);
-                            setConfirm(true);
-                        }}
-                    >
-                        <FiXCircle />
-                    </p>
-                ) : null,
+            render: (_text, record) => {
+                return <p
+                    className="cursor-pointer text-xl text-red-500"
+                    onClick={() => {
+                        setSelectedTicket(record);
+                        setConfirm(true);
+                    }}
+                >
+                    <FiXCircle />
+                </p>
+            }
         }] : []),
     ];
 
@@ -144,19 +165,40 @@ const UserStorage = () => {
         };
         fetchData();
     };
+
+    const [searchQuery, setSearchQuery] = useState('');  
+
+    const filteredTickets = (tickets) => {
+        return tickets.filter(ticket => {
+            const { _id, username, email, phoneNumber } = ticket;
+            return (
+                _id.includes(searchQuery) || 
+                username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        });
+    };
+
     return (
-        <div className='flex justify-center items-center h-[calc(100vh-72px)] bg-[#F2F4F7] max-md:pb-[100px]'>
+        <div className=' bg-[#F2F4F7] max-md:pb-[100px]'>
+            <Input
+                placeholder="Tìm kiếm "
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="p-3"
+            />
             <Tabs defaultActiveKey='1'
-                onChange={setActiveTab} // Update the active tab state
-                className='bg-white rounded-md px-4 w-[70%] pb-4'>
+                onChange={setActiveTab}
+                className='bg-white rounded-md px-4 w-full pb-4'>
                 <Item tab={<p className='w-1/3 font-semibold text-lg'>Hiện tại</p>} key='1'>
-                    {listTicket && <Table dataSource={waitingTickets} columns={columns} />}
+                    {listTicket && <Table dataSource={filteredTickets(waitingTickets)} columns={columns} pagination={{ pageSize: 8 }} />}
                 </Item>
                 <Item tab={<p className='w-1/3 font-semibold text-lg'>Đã đi</p>} key='2'>
-                    {listTicket && <Table dataSource={completedTickets} columns={columns} />}
+                    {listTicket && <Table dataSource={filteredTickets(completedTickets)} columns={columns} pagination={{ pageSize: 8 }} />}
                 </Item>
                 <Item tab={<p className='w-1/3 font-semibold text-lg'>Đã hủy</p>} key='3'>
-                    {listTicket && <Table dataSource={cancelledTickets} columns={columns} />}
+                    {listTicket && <Table dataSource={filteredTickets(cancelledTickets)} columns={columns} pagination={{ pageSize: 8 }} />}
                 </Item>
             </Tabs>
             <Modal
@@ -223,4 +265,4 @@ const UserStorage = () => {
     )
 }
 
-export default UserStorage
+export default ListTicket

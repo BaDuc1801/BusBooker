@@ -8,20 +8,30 @@ import UserStorage from "./UserStorage.jsx"
 import RegisterSale from "./RegisterSale.jsx"
 import RouteDetail from "./RouteDetail/RouteDetail.jsx"
 import Payment from "./Payment.jsx"
+import Manager from "./Manager/Manager.jsx"
+import ListUser from "./Manager/ListUser.jsx"
+import Search from "./Search.jsx"
+import ListTicket from "./Manager/ListTicket.jsx"
 
 function App() {
   return (
     <Routes>
-      <Route path="" element={<Layout/>}>
-        <Route path="" element={<Home/>}/>
-        <Route path="/my-storage" element={<UserStorage/>}/>
-        <Route path="/register-sale" element={<RegisterSale/>}/>
-        <Route path="/route-details" element={<RouteDetail/>}/>
-        <Route path="/payment" element={<Payment/>}/>
+      <Route path="" element={<Layout />}>
+        <Route path="" element={<Search />}>
+          <Route path="" element={<Home />} />
+          <Route path="/route-details" element={<RouteDetail />} />
+        </Route>
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/my-storage" element={<UserStorage />} />
+        <Route path="/register-sale" element={<RegisterSale />} />
+        <Route path="/manager" element={<Manager />}>
+          <Route path="/manager/users" element={<ListUser />} />
+          <Route path="/manager/tickets" element={<ListTicket />} />
+        </Route>
       </Route>
-      <Route path="/login" element={<Login/>}/>
-      <Route path="/register" element={<Register/>}/>
-      <Route path="/forgot-password" element={<ForgotPass/>}/>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPass />} />
     </Routes>
   )
 }

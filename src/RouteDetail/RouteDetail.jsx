@@ -1,27 +1,41 @@
 import axios from 'axios'
-import React, { useContext, useEffect, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
-import { UserContext } from '../Context/UserContext'
+import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import ScheduleCard from './ScheduleCard'
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 const RouteDetail = () => {
     const beUrl = import.meta.env.VITE_APP_BE_URL;
     const [route, setRoute] = useState([]);
     const endTime = localStorage.getItem('endTime');
     const location = useLocation();
-
+   
     useEffect(() => {
         const fetchData = async () => {
             const origin = localStorage.getItem('originChoice');
             const desti = localStorage.getItem('destiChoice');
             const startTime = localStorage.getItem('startTime');
-            const endTime = localStorage.getItem('endTime');
-            let url = `${beUrl}/routes/find-schedule?origin=${origin}&destination=${desti}`;
+            const formattedDate = (date) => {
+                const getDate = new Date(date);
+                const year = getDate.getFullYear();
+                const month = String(getDate.getMonth() + 1).padStart(2, '0'); 
+                const day = String(getDate.getDate()).padStart(2, '0'); 
+            
+                return `${year}-${month}-${day}`; 
+            };
             if (startTime) {
-                url += `&startTime=${startTime}`;
+                let url = `${beUrl}/routes/find-schedule?origin=${origin}&destination=${desti}&startTime=${startTime}`;
+                const data = await axios.get(url)
+                setRoute(data.data)
+            }else{
+                const defaultDate = dayjs().add(1, 'day');
+                let url = `${beUrl}/routes/find-schedule?origin=${origin}&destination=${desti}&startTime=${formattedDate(defaultDate.toISOString())}`;
+                const data = await axios.get(url)
+                setRoute(data.data)
             }
-            const data = await axios.get(url)
-            setRoute(data.data)
+          
         }
         fetchData();
     }, [location])

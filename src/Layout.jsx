@@ -3,18 +3,14 @@ import { FaPhoneAlt } from "react-icons/fa"
 import { IoBus, IoSearch } from "react-icons/io5"
 import { LuTicket } from "react-icons/lu"
 import { MdManageAccounts } from "react-icons/md"
-import { RiAccountCircleLine, RiMoneyDollarCircleFill } from "react-icons/ri"
+import { RiAccountCircleLine } from "react-icons/ri"
 import { TiThMenu } from "react-icons/ti"
 import { Link, Outlet, useNavigate } from "react-router-dom"
-import { Drawer, Dropdown, Menu, Tabs, Tooltip } from "antd"
+import { Drawer, Dropdown, Menu, Tooltip } from "antd"
 import { useContext, useEffect, useState } from "react"
 import { UserContext } from "./Context/UserContext.jsx"
-import Item from "antd/es/list/Item.js"
-import DatePickerSpace from "./DatePicker.jsx"
+
 import axios from "axios"
-import ImgHome from "./assets/image.jpg"
-import { HiCheckBadge, HiReceiptPercent } from "react-icons/hi2"
-import { TfiHeadphoneAlt } from "react-icons/tfi"
 
 const Layout = () => {
     const nav = useNavigate();
@@ -160,13 +156,11 @@ const Layout = () => {
     const { user, authenticated, logout } = useContext(UserContext);
     const beUrl = import.meta.env.VITE_APP_BE_URL;
     const [listRoutes, setListRoutes] = useState([]);
-    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             const list = await axios.get(`${beUrl}/routes`);
             setListRoutes(list.data);
-            setVisible(false);
         }
         fetchData()
     }, [])
@@ -202,15 +196,19 @@ const Layout = () => {
                         <BsTicketPerforatedFill className="text-xl" />
                         Đơn hàng của tôi
                     </Link>
-                    <Link to="register-sale" className="flex items-center gap-2 cursor-pointer max-md:hidden">
-                        Mở bán vé trên BusBooker
-                    </Link>
                     {
-                        true ? <></> :
-                            <div className="flex items-center gap-1 cursor-pointer max-md:hidden">
+                        user?.role !== "Admin" ?
+                            <Link to="register-sale" className="flex items-center gap-2 cursor-pointer max-md:hidden">
+                                Mở bán vé trên BusBooker
+                            </Link>
+                            : <></>
+                    }
+                    {
+                        user?.role === "Admin" ?
+                            <Link to="/manager" className="flex items-center gap-1 cursor-pointer max-md:hidden">
                                 <MdManageAccounts className="text-xl" />
                                 Quản lý
-                            </div>
+                            </Link> : <></>
                     }
                     <Tooltip placement="bottomRight"
                         title={<div className="text-black">
@@ -257,38 +255,8 @@ const Layout = () => {
                     Tài khoản
                 </button>
             </div>
-            {
-                !visible ? <>
-                    <div className='relative h-[350px]  max-md:h-[400px]'>
-                        <img src={ImgHome} className='w-full h-full absolute -z-10'></img>
-                        <div className='flex justify-center items-center h-[298px] max-md:h-[400px]'>
-                            <Tabs defaultActiveKey='1'
-                                className='bg-white rounded-md px-4 w-[70%] pb-4'>
-                                <Item tab={<p className='w-1/2 font-semibold text-lg'>Một chiều</p>} key='1'>
-                                    <DatePickerSpace check={true} listRoutes={listRoutes} />
-                                </Item>
-                                <Item tab={<p className='w-1/2 font-semibold text-lg'>Hai chiều</p>} key='2'>
-                                    <DatePickerSpace check={false} listRoutes={listRoutes} />
-                                </Item>
-                            </Tabs>
-                        </div>
-                        <div className='absolute bottom-0 bg-black bg-opacity-50 flex justify-around w-full text-yellow-400 font-semibold py-3 max-md:hidden'>
-                            <p className='flex items-center gap-2 text-lg'><HiCheckBadge />
-                                Chắc chắn có chỗ</p>
-                            <p className='flex items-center gap-2 text-lg'><TfiHeadphoneAlt />
-                                Hỗ trợ 24/7</p>
-                            <p className='flex items-center gap-2 text-lg'><HiReceiptPercent />
-                                Nhiều ưu đãi</p>
-                            <p className='flex items-center gap-2 text-lg'><RiMoneyDollarCircleFill />
-                                Thanh toán đa dạng</p>
-                        </div>
-                    </div>
-                </>
-                    : <></>
-
-            }
             <div>
-                <Outlet context={{ setVisible, listRoutes }} />
+                <Outlet context={{listRoutes}}/>
             </div>
         </div>
     )

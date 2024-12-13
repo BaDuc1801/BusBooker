@@ -1,10 +1,11 @@
 import { Button, Carousel, Modal, Timeline } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { FaCircleDot, FaLocationDot } from 'react-icons/fa6'
 import { PiArmchairFill } from 'react-icons/pi'
 import { TbArmchair2, TbArmchair2Off } from 'react-icons/tb'
 import SeatMap from './SeatMap'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { UserContext } from '../Context/UserContext'
 
 const ScheduleCard = ({ item, setText, endTime }) => {
   const formattedDate = date => {
@@ -62,18 +63,25 @@ const ScheduleCard = ({ item, setText, endTime }) => {
 
   const [warning, setWarning] = useState(false)
   const nav = useNavigate()
-  const { setVisible } = useOutletContext();
-  const [clickCount, setClickCount] = useState(0);
-
+  const { user } = useContext(UserContext);
+  const [login, setLogin] = useState(false);
+  const onLogin = () => {
+    setLogin(pre => !pre);
+  }
   const onClickNext = () => {
+    if (user === null) {
+      setLogin(true);
+      return
+    }
     if (selectedSeats.length === 0) {
       setWarning(pre => !pre);
       return;
     }
-    setClickCount(prevCount => prevCount + 1);
+    let clickCount = parseInt(localStorage.getItem('clickCount'), 10) || 0;
+    clickCount += 1;
+    localStorage.setItem('clickCount', clickCount);
     if (endTime === "") {
-      setVisible(true);
-      localStorage.setItem('chieuDi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
+      localStorage.setItem('chieuDi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats, seatNumber: selectedSeats }));
       localStorage.setItem('giaChieuDi', totalPrice)
       nav("/payment");
     } else {
@@ -89,25 +97,19 @@ const ScheduleCard = ({ item, setText, endTime }) => {
       setMore(pre => !pre);
       setText("Chiều về");
       setSelectedSeats([]);
-      if (clickCount === 0) {
-        window.localStorage.setItem('chieuDi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
-        window.localStorage.setItem('giaChieuDi', totalPrice)
-      }
       if (clickCount === 1) {
-        localStorage.setItem('chieuVe', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats ,seatNumber: selectedSeats }));
-        window.localStorage.setItem('giaChieuVe', totalPrice)
+        localStorage.setItem('chieuDi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats, seatNumber: selectedSeats }));
+        localStorage.setItem('giaChieuDi', totalPrice)
+        nav("/route-details");
+      }
+      if (clickCount === 2) {
+        localStorage.setItem('chieuVe', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats, seatNumber: selectedSeats }));
+        localStorage.setItem('giaChieuVe', totalPrice)
         nav('/payment');
         return
       }
-      nav("/route-details");
     }
   };
-
-  useEffect(() => {
-    if (location.pathname !== "/payment") {
-      setVisible(false);
-    }
-  }, [location.pathname]);
 
   return (
     <div className='bg-white rounded-md shadow-md px-3'>
@@ -249,6 +251,20 @@ const ScheduleCard = ({ item, setText, endTime }) => {
                 </Button>
               }>
               <p className='font-bold text-lg text-center'>Vui lòng chọn ít nhất 1 chỗ ngồi</p>
+            </Modal>
+            <Modal
+              open={login} onCancel={onLogin} centered
+              footer={
+              <>
+                <Button onClick={onLogin}>
+                  Hủy
+                </Button>
+                <Button onClick={() => nav("/login")} type="primary" className='font-semibold bg-yellow-400 text-black hover:!bg-yellow-300 hover:!text-black'>
+                  Đăng nhập
+                </Button>
+              </>
+              }>
+              <p className='font-bold text-lg text-center'>Bạn cần đăng nhập để có thể đặt vé</p>
             </Modal>
           </div>
         </>
