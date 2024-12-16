@@ -1,9 +1,9 @@
-import { Button, Radio, Input, Form, Modal, Alert } from 'antd';
+import { Button, Radio, Input, Form, Modal } from 'antd';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
 import { BsShieldFillCheck } from 'react-icons/bs';
 import { RiDiscountPercentFill } from 'react-icons/ri';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from './Context/UserContext';
 import { FaCircleCheck } from 'react-icons/fa6';
 import qrImg from "./assets/qr.jpg"

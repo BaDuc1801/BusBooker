@@ -39,10 +39,10 @@ const ListTicket = () => {
         return rs
     }
 
-    const formattedDate = date => {
-        const getDate = new Date(date)
-        return getDate.toLocaleDateString('vi-VN')
-    }
+    const formattedDate = (date) => {
+        const getDate = new Date(date);
+        return getDate.toLocaleDateString('vi-VN', { timeZone: 'UTC' });
+    };
 
     const [modal, setModal] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);

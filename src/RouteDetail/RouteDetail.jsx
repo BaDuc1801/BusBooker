@@ -11,7 +11,7 @@ const RouteDetail = () => {
     const [route, setRoute] = useState([]);
     const endTime = localStorage.getItem('endTime');
     const location = useLocation();
-   
+
     useEffect(() => {
         const fetchData = async () => {
             const origin = localStorage.getItem('originChoice');
@@ -20,22 +20,22 @@ const RouteDetail = () => {
             const formattedDate = (date) => {
                 const getDate = new Date(date);
                 const year = getDate.getFullYear();
-                const month = String(getDate.getMonth() + 1).padStart(2, '0'); 
-                const day = String(getDate.getDate()).padStart(2, '0'); 
-            
-                return `${year}-${month}-${day}`; 
+                const month = String(getDate.getMonth() + 1).padStart(2, '0');
+                const day = String(getDate.getDate()).padStart(2, '0');
+
+                return `${year}-${month}-${day}`;
             };
             if (startTime) {
                 let url = `${beUrl}/routes/find-schedule?origin=${origin}&destination=${desti}&startTime=${startTime}`;
                 const data = await axios.get(url)
                 setRoute(data.data)
-            }else{
+            } else {
                 const defaultDate = dayjs().add(1, 'day');
                 let url = `${beUrl}/routes/find-schedule?origin=${origin}&destination=${desti}&startTime=${formattedDate(defaultDate.toISOString())}`;
                 const data = await axios.get(url)
                 setRoute(data.data)
             }
-          
+
         }
         fetchData();
     }, [location])
@@ -49,8 +49,9 @@ const RouteDetail = () => {
             {
                 route.length > 0 && route[0]?.schedules.map((item, index) => {
                     return (
-                        <ScheduleCard item={item} key={index} setText={setText} endTime={endTime}/>
+                        <ScheduleCard item={item} key={index} setText={setText} endTime={endTime} />
                     )
+
                 })
             }
         </div>

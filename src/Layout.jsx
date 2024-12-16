@@ -1,16 +1,17 @@
 import { BsTicketPerforatedFill } from "react-icons/bs"
 import { FaPhoneAlt } from "react-icons/fa"
-import { IoBus, IoSearch } from "react-icons/io5"
+import { IoBus, IoNotifications, IoSearch } from "react-icons/io5"
 import { LuTicket } from "react-icons/lu"
 import { MdManageAccounts } from "react-icons/md"
 import { RiAccountCircleLine } from "react-icons/ri"
 import { TiThMenu } from "react-icons/ti"
 import { Link, Outlet, useNavigate } from "react-router-dom"
-import { Drawer, Dropdown, Menu, Tooltip } from "antd"
+import { Badge, Button, Drawer, Dropdown, Menu, Modal, Tooltip } from "antd"
 import { useContext, useEffect, useState } from "react"
 import { UserContext } from "./Context/UserContext.jsx"
 
 import axios from "axios"
+import { GoDotFill } from "react-icons/go"
 
 const Layout = () => {
     const nav = useNavigate();
@@ -156,14 +157,48 @@ const Layout = () => {
     const { user, authenticated, logout } = useContext(UserContext);
     const beUrl = import.meta.env.VITE_APP_BE_URL;
     const [listRoutes, setListRoutes] = useState([]);
+    const [listNoti, setListNoti] = useState([])
+    const [notiCount, setNotiCount] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
             const list = await axios.get(`${beUrl}/routes`);
+            const noti = await axios.get(`${beUrl}/noti/all`)
             setListRoutes(list.data);
+            setListNoti(noti.data);
+            const count = noti.data.filter(item => !item.read).length;
+            setNotiCount(count);
         }
         fetchData()
     }, [])
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedNoti, setSelectedNoti] = useState(null);
+
+    const showModal = (item) => {
+        setSelectedNoti(item);
+        setIsModalVisible(true);
+    };
+
+    const handleClose = async () => {
+        await axios.put(`${beUrl}/noti/${selectedNoti._id}`)
+        setNotiCount(notiCount - 1)
+        const updatedListNoti = listNoti.map(item =>
+            item._id === selectedNoti._id ? { ...item, read: true } : item
+        );
+        setListNoti(updatedListNoti);
+        setIsModalVisible(false);
+    };
+
+    const itemsNoti = listNoti.filter(item => !item.read).flatMap((item, index) => [
+        {
+            label: <p onClick={() => showModal(item)} className="flex items-center justify-between gap-2"><p>Có 1 yêu cầu mở nhà xe từ <span className="font-bold">{item?.email}</span></p> {!item?.read ? <GoDotFill className="text-red-500" /> : ""}</p>,
+            key: index.toString(),
+        },
+        {
+            type: 'divider',
+        },
+    ]).slice(0, -1);
 
     return (
         <div>
@@ -205,10 +240,25 @@ const Layout = () => {
                     }
                     {
                         user?.role === "Admin" ?
-                            <Link to="/manager" className="flex items-center gap-1 cursor-pointer max-md:hidden">
-                                <MdManageAccounts className="text-xl" />
-                                Quản lý
-                            </Link> : <></>
+                            <>
+                                <Link to="/manager" className="flex items-center gap-1 cursor-pointer max-md:hidden">
+                                    <MdManageAccounts className="text-xl" />
+                                    Quản lý
+                                </Link>
+                                <Dropdown
+                                    menu={{ items: itemsNoti }}
+                                    trigger={['click']}
+                                    placement="bottomRight"
+                                    arrow={{
+                                        pointAtCenter: true,
+                                    }}
+                                >
+                                    <Badge count={notiCount} >
+                                        <IoNotifications className="text-2xl text-white" />
+                                    </Badge>
+                                </Dropdown>
+                            </>
+                            : <></>
                     }
                     <Tooltip placement="bottomRight"
                         title={<div className="text-black">
@@ -255,8 +305,20 @@ const Layout = () => {
                     Tài khoản
                 </button>
             </div>
+            <Modal title="Thông tin" open={isModalVisible} footer={[
+                <Button key="close" onClick={handleClose}>
+                    Đóng
+                </Button>
+            ]}>
+                <div className="flex flex-col gap-2">
+                    <p>Tên: {selectedNoti ? <span className="font-semibold">{selectedNoti.username}</span> : ''}</p>
+                    <p>Email: {selectedNoti ? <span className="font-semibold">{selectedNoti.email}</span> : ''}</p>
+                    <p>Số điện thoại: {selectedNoti ? <span className="font-semibold">{selectedNoti.phoneNumber}</span> : ''}</p>
+                    <p>Tên nhà xe đăng kí: {selectedNoti ? <span className="font-semibold">{selectedNoti.garage}</span> : ''}</p>
+                </div>
+            </Modal>
             <div>
-                <Outlet context={{listRoutes}}/>
+                <Outlet context={{ listRoutes }} />
             </div>
         </div>
     )

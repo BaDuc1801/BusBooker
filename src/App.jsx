@@ -12,6 +12,10 @@ import Manager from "./Manager/Manager.jsx"
 import ListUser from "./Manager/ListUser.jsx"
 import Search from "./Search.jsx"
 import ListTicket from "./Manager/ListTicket.jsx"
+import VoucherManage from "./Manager/VoucherManage.jsx"
+import BusManager from "./Manager/BusManager.jsx"
+import RouteManage from "./Manager/RouteManage.jsx"
+import Schedule from "./Manager/Schedule.jsx"
 
 function App() {
   return (
@@ -27,6 +31,10 @@ function App() {
         <Route path="/manager" element={<Manager />}>
           <Route path="/manager/users" element={<ListUser />} />
           <Route path="/manager/tickets" element={<ListTicket />} />
+          <Route path="/manager/vouchers" element={<VoucherManage />} />
+          <Route path="/manager/bus" element={<BusManager />} />
+          <Route path="/manager/routes" element={<RouteManage />} />
+          <Route path="/manager/schedules" element={<Schedule />} />
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />

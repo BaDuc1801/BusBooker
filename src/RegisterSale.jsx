@@ -1,26 +1,26 @@
-import { Button, Col, Form, Input, Row } from 'antd'
-import React, { useEffect } from 'react'
-import { useOutletContext } from 'react-router-dom';
+import { Button, Col, Form, Input, notification, Row } from 'antd'
+import axios from 'axios';
+import React from 'react'
+
 
 const RegisterSale = () => {
     const { form } = Form.useForm();
+    const beUrl = import.meta.env.VITE_APP_BE_URL;
 
-    const onFinish = (value) => {
-        console.log(value)
-    }
+    const onFinish = async (value) => {
+        try {
+            await axios.post(`${beUrl}/noti`, value)
+            notification.success({ message: 'Gửi thông tin thành công' });
+        } catch {
+            notification.error({ message: 'Gửi thông tin không thành công' });
 
-    const { setVisible } = useOutletContext();
-    useEffect(() => {
-        setVisible(true);
-        return () => {
-            setVisible(false);
-        };
-    }, [setVisible]);
+        }
+    };
 
     return (
         <div className='bg-blue-100 h-[calc(100vh-72px)] flex'>
             <div className='flex flex-col items-center w-1/2 m-auto max-md:hidden'>
-                <p className='text-4xl text-center font-semibold'>Tăng 30% lượng khách đặt vé khi mở bán online trên Vexere.com ngay hôm nay!</p>
+                <p className='text-4xl text-center font-semibold'>Tăng 30% lượng khách đặt vé khi mở bán online ngay hôm nay!</p>
                 <p className='mt-10 font-semibold text-xl'>Đăng ký miễn phí và chỉ mất 1 phút để hoàn tất</p>
             </div>
             <Form
@@ -53,10 +53,6 @@ const RegisterSale = () => {
                                 {
                                     required: true,
                                     message: 'Vui lòng nhập số điện thoại!',
-                                },
-                                {
-                                    type: 'number',
-                                    message: 'Vui lòng nhập số!',
                                 },
                             ]}
                         >
@@ -93,12 +89,6 @@ const RegisterSale = () => {
                         </Form.Item>
                     </Col>
                 </Row>
-                <Form.Item
-                    label="Thành phố (Tỉnh) / Tuyến đường"
-                    name="routes"
-                >
-                    <Input placeholder="Nhập tuyến đường" className="p-2" />
-                </Form.Item>
                 <Button type="primary" htmlType="submit" className='w-full py-4'>
                     Gửi
                 </Button>

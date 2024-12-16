@@ -1,8 +1,11 @@
 import React, { useContext, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Menu } from 'antd';
-import { FaTicket, FaUser } from 'react-icons/fa6';
+import { FaBusSimple, FaTicket, FaUser } from 'react-icons/fa6';
 import { UserContext } from '../Context/UserContext';
+import { PiSealPercentFill } from 'react-icons/pi';
+import { CiRoute } from 'react-icons/ci';
+import { RiCalendarScheduleFill } from 'react-icons/ri';
 
 const Manager = () => {
     const { user } = useContext(UserContext);
@@ -22,8 +25,14 @@ const Manager = () => {
             icon: <FaUser />
         },
         {
-            key: 'sub2',
-            label: 'Navigation Two',
+            key: 'bus',
+            label: 'Quản lý xe',
+            icon: <FaBusSimple />
+        },
+        {
+            key: 'schedules',
+            label: 'Quản lý lịch trình',
+            icon: <RiCalendarScheduleFill />
         },
         {
             key: 'tickets',
@@ -31,8 +40,14 @@ const Manager = () => {
             icon: <FaTicket />
         },
         {
-            key: 'grp',
-            label: 'Group',
+            key: 'routes',
+            label: 'Quản lý tuyến đường',
+            icon: <CiRoute />
+        },
+        {
+            key: 'vouchers',
+            label: 'Quản lý voucher',
+            icon:<PiSealPercentFill />
         },
     ];
     const onClick = (e) => {

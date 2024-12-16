@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Modal, Input, notification, Button } from 'antd';
+import { Table, Modal, Input, notification } from 'antd';
 import { RiEditFill } from 'react-icons/ri';
 import { FaTrash } from 'react-icons/fa';
 
 const ListUser = () => {
   const beUrl = import.meta.env.VITE_APP_BE_URL;
   const [listUser, setListUser] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null); // To store the user being edited
-  const [confirmDelete, setConfirmDelete] = useState(false); // To control delete modal visibility
-  const [userIdToDelete, setUserIdToDelete] = useState(null); // To store the userId for deletion
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false); // To control edit modal visibility
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
-  const [userForm, setUserForm] = useState({
+  const [userForm, setRouteForm] = useState({
     username: '',
     email: '',
     phoneNumber: '',
@@ -52,7 +52,7 @@ const ListUser = () => {
       dataIndex: '',
       key: '',
       render: (_text, record) => (
-        <div className="flex cursor-pointer text-xl gap-5">
+        <div className="flex cursor-pointer text-lg gap-5">
           <p onClick={() => handleEdit(record)}>
             <RiEditFill />
           </p>
@@ -79,20 +79,16 @@ const ListUser = () => {
     fetchData();
   }, []);
 
-  // Handle edit functionality
   const handleEdit = (user) => {
     setSelectedUser(user);
-    setUserForm({
+    setRouteForm({
       username: user.username,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      role: user.role,
-      avatar: user.avatar,
     });
     setIsEditModalVisible(true);
   };
 
-  // Handle delete functionality
   const handleDelete = (userId) => {
     setUserIdToDelete(userId);
     setConfirmDelete(true);
@@ -101,12 +97,11 @@ const ListUser = () => {
   const confirmDeleteUser = async () => {
     try {
       await axios.delete(`${beUrl}/users/${userIdToDelete}`);
-      setListUser(listUser.filter((user) => user._id !== userIdToDelete)); // Remove user from the UI
-      setConfirmDelete(false); // Close the modal
-      notification.success({ message: 'User deleted successfully' });
+      setListUser(listUser.filter((user) => user._id !== userIdToDelete));
+      setConfirmDelete(false);
+      notification.success({ message: 'Xóa người dùng thành công' });
     } catch (error) {
-      notification.error({ message: 'Failed to delete user' });
-      console.error('Error deleting user:', error);
+      notification.error({ message: 'Lỗi khi xóa người dùng' });
     }
   };
 
@@ -127,25 +122,43 @@ const ListUser = () => {
         )
       );
       setIsEditModalVisible(false);
-      notification.success({ message: 'User updated successfully' });
+      notification.success({ message: 'Cập nhật người dùng thành công' });
     } catch (error) {
-      notification.error({ message: 'Failed to update user' });
-      console.error('Error updating user:', error);
+      notification.error({ message: 'Lỗi cập nhật người dùng' });
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUserForm((prevForm) => ({
+    setRouteForm((prevForm) => ({
       ...prevForm,
       [name]: value,
     }));
   };
 
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredUser = (user) => {
+    return user.filter(user => {
+      const { email, phoneNumber, username } = user;
+      return (
+        email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        username?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+  };
+
   return (
-    <div className="flex items-center justify-center">
+    <div className="">
+      <Input
+        placeholder="Tìm kiếm "
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="p-3"
+      />
       <Table
-        dataSource={listUser}
+        dataSource={filteredUser(listUser)}
         columns={columns}
         className="w-full"
         pagination={{ pageSize: 6 }}
