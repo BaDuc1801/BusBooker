@@ -1,12 +1,14 @@
 import { Button, Form, Input } from 'antd'
+import axios from 'axios';
 import React from 'react'
 import { IoBus } from 'react-icons/io5';
 
 const ForgotPass = () => {
   const { form } = Form.useForm();
+  const beUrl = import.meta.env.VITE_APP_BE_URL;
 
-  const onFinish = (value) => {
-    console.log(value);
+  const onFinish = async (value) => {
+      await axios.post(`${beUrl}/email`, value);
   }
 
   return (
@@ -17,7 +19,7 @@ const ForgotPass = () => {
         className='bg-white w-[400px] p-5 rounded-lg'
       >
         <p className='text-center font-bold text-3xl mb-4 text-[#1677ff] flex justify-center items-center gap-2'> <IoBus className="text-yellow-300 text-3xl" />BusBooker</p>
-        <p className='text-center mb-4 text-md'>Quên mật khẩu</p>
+        <p className='text-center mb-4 text-xl font-semibold text-[#1677ff]'>Quên mật khẩu</p>
         <p className='text-center mb-6'>Để khôi phục nhập khẩu, bạn vui lòng nhập Email đã dùng để đăng ký trên hệ thống.</p>
         <Form.Item
           label="Email"

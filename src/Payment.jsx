@@ -56,18 +56,20 @@ const Payment = () => {
             await axios.put(`${beUrl}/schedule/book-seat`, { scheduleId: chieuDi.scheduleId, seatNumber: chieuDi.seatNumber });
             if (chieuVe) {
                 await axios.put(`${beUrl}/schedule/book-seat`, { scheduleId: chieuVe.scheduleId, seatNumber: chieuVe.seatNumber });
-                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "waiting", phoneNumber: value.phoneNumber, price: total, userId: user._id, paymentMethod: "direct", voucher: selectedVoucher?._id, returnTrip: { scheduleId: chieuVe.scheduleId, seatNumbers: chieuVe.seatNumber }, departureTrip: { scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber } });
+                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "waiting", phoneNumber: value.phoneNumber, price: total/2, userId: user._id, paymentMethod: "direct", voucher: selectedVoucher?._id, scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber, });
+                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "waiting", phoneNumber: value.phoneNumber, price: total/2, userId: user._id, paymentMethod: "direct", voucher: selectedVoucher?._id, scheduleId: chieuVe.scheduleId, seatNumbers: chieuVe.seatNumber, });
             } else {
-                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "waiting", phoneNumber: value.phoneNumber, price: total, userId: user._id, paymentMethod: "direct", departureTrip: { scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber }, return: {}, voucher: selectedVoucher?._id });
+                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "waiting", phoneNumber: value.phoneNumber, price: total, userId: user._id, paymentMethod: "direct", voucher: selectedVoucher?._id, scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber, });
             }
             setModal(pre => !pre);
         } else {
             await axios.put(`${beUrl}/schedule/book-seat`, { scheduleId: chieuDi.scheduleId, seatNumber: chieuDi.seatNumber });
             if (chieuVe) {
                 await axios.put(`${beUrl}/schedule/book-seat`, { scheduleId: chieuVe.scheduleId, seatNumber: chieuVe.seatNumber });
-                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "booked", phoneNumber: value.phoneNumber, price: total, userId: user._id, paymentMethod: "bank", voucher: selectedVoucher?._id, returnTrip: { scheduleId: chieuVe.scheduleId, seatNumbers: chieuVe.seatNumber }, departureTrip: { scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber } });
+                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "booked", phoneNumber: value.phoneNumber, price: total/2, userId: user._id, paymentMethod: "bank", voucher: selectedVoucher?._id, scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber, });
+                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "booked", phoneNumber: value.phoneNumber, price: total/2, userId: user._id, paymentMethod: "bank", voucher: selectedVoucher?._id, scheduleId: chieuVe.scheduleId, seatNumbers: chieuVe.seatNumber, });
             } else {
-                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "booked", phoneNumber: value.phoneNumber, price: total, userId: user._id, paymentMethod: "bank", departureTrip: { scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber }, return: {}, voucher: selectedVoucher?._id });
+                await axios.post(`${beUrl}/tickets`, { email: value.email, username: value.username, status: "booked", phoneNumber: value.phoneNumber, price: total, userId: user._id, paymentMethod: "bank", scheduleId: chieuDi.scheduleId, seatNumbers: chieuDi.seatNumber,  voucher: selectedVoucher?._id });
             }
             setqr(pre => !pre);
         }

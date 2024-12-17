@@ -1,10 +1,11 @@
-import { Button, Modal, Table, Tabs } from 'antd'
+import { Button, Form, Input, Modal, Rate, Table, Tabs } from 'antd'
 import Item from 'antd/es/list/Item'
 import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from './Context/UserContext'
 import axios from 'axios'
 import { IoInformationCircle } from 'react-icons/io5'
 import { FiXCircle } from 'react-icons/fi'
+import { GoCodeReview } from 'react-icons/go'
 
 const UserStorage = () => {
     const { user } = useContext(UserContext);
@@ -36,8 +37,15 @@ const UserStorage = () => {
 
     const formattedTime = (date) => {
         const getDate = new Date(date);
-        const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' };
+        const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Ho_Chi_Minh' };
         const rs = getDate.toLocaleTimeString('vi-VN', options);
+        return rs
+    }
+
+    const formattedTimeFromDB = (date) => {
+        const getDate = new Date(date);
+        const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' };
+        const rs = getDate.toLocaleTimeString('UTC', options);
         return rs
     }
 
@@ -49,6 +57,7 @@ const UserStorage = () => {
     const [modal, setModal] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [confirm, setConfirm] = useState(false);
+    const [review, setReview] = useState(false);
     const [activeTab, setActiveTab] = useState('1');
 
     const columns = [
@@ -61,21 +70,35 @@ const UserStorage = () => {
             }
         },
         {
-            title: 'ID Vé',
-            dataIndex: '_id',
+            title: 'Điểm xuất phát',
+            dataIndex: 'scheduleId',
             key: '_id',
-            // width: 300
+            render: (text) => {
+                return <p>{text?.routeId?.origin}</p>
+            }
         },
         {
-            title: 'Loại Vé',
-            dataIndex: 'returnTrip',
-            key: 'address',
+            title: 'Điểm đến',
+            dataIndex: 'scheduleId',
+            key: '_id',
             render: (text) => {
-                if (text.seatNumbers.length === 0) {
-                    return <span>1 chiều</span>;
-                } else {
-                    return <span>2 chiều</span>;
-                }
+                return <p>{text?.routeId?.destination}</p>
+            }
+        },
+        {
+            title: 'Thời gian khởi hành',
+            dataIndex: 'scheduleId',
+            key: '_id',
+            render: (text) => {
+                return <p>{formattedDate(text?.startTime)} - {formattedTimeFromDB(text?.startTime)}</p>
+            }
+        },
+        {
+            title: 'Thời gian dự kiến đến nơi',
+            dataIndex: 'scheduleId',
+            key: '_id',
+            render: (text) => {
+                return <p>{formattedDate(text?.endTime)} - {formattedTimeFromDB(text?.endTime)}</p>
             }
         },
         {
@@ -128,6 +151,16 @@ const UserStorage = () => {
                     </p>
                 ) : null,
         }] : []),
+        ...(activeTab === '2' ? [{
+            title: 'Đánh giá',
+            dataIndex: 'hasReviewed',
+            render: (text, record) => {
+                return (!text ? <p onClick={() => {
+                    setSelectedTicket(record);
+                    setReview(true);
+                }}><GoCodeReview className='text-xl cursor-pointer' /></p> : "")
+            }
+        }] : []),
     ];
 
     const handleClose = () => {
@@ -144,10 +177,33 @@ const UserStorage = () => {
         };
         fetchData();
     };
+
+
+    const [rating, setRating] = useState(0);
+    const [reviewContent, setReviewContent] = useState('');
+
+    const handleReviewSubmit = async () => {
+        const newReview = {
+            rating: rating,
+            content: reviewContent,
+            ticketId: selectedTicket._id,
+            userId: user._id,
+            busId: selectedTicket.scheduleId.busId._id
+        };
+
+        await axios.post(`${beUrl}/tickets/review`, newReview);
+        setReview(false);
+        const fetchData = async () => {
+            const { data } = await axios.get(`${beUrl}/tickets/userId/${user?._id}`);
+            setListTicket(data);
+        };
+        fetchData();
+    };
+
     return (
         <div className='flex justify-center items-center h-[calc(100vh-72px)] bg-[#F2F4F7] max-md:pb-[100px]'>
             <Tabs defaultActiveKey='1'
-                onChange={setActiveTab} // Update the active tab state
+                onChange={setActiveTab}
                 className='bg-white rounded-md px-4 w-[70%] pb-4'>
                 <Item tab={<p className='w-1/3 font-semibold text-lg'>Hiện tại</p>} key='1'>
                     {listTicket && <Table dataSource={waitingTickets} columns={columns} />}
@@ -179,6 +235,36 @@ const UserStorage = () => {
                 <p>Bạn có chắc chắn muốn hủy vé này không?</p>
             </Modal>
             <Modal
+                title="Đánh giá chuyến đi"
+                open={review}
+                onCancel={() => setReview(false)}
+                footer={[
+                    <Button key="cancel" onClick={() => setReview(false)}>
+                        Hủy
+                    </Button>,
+                    <Button
+                        key="confirm"
+                        type="primary"
+                        onClick={handleReviewSubmit}
+                    >
+                        Đăng
+                    </Button>,
+                ]}
+            >
+                <Form layout="vertical" onFinish={handleReviewSubmit}>
+                    <Form.Item label="Đánh giá sao" name="rating">
+                        <Rate value={rating} onChange={setRating} />
+                    </Form.Item>
+                    <Form.Item label="Nhận xét" name="review">
+                        <Input.TextArea
+                            rows={4}
+                            value={reviewContent}
+                            onChange={(e) => setReviewContent(e.target.value)}
+                        />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
                 title="Chi tiết Vé"
                 open={modal}
                 footer={[
@@ -191,29 +277,14 @@ const UserStorage = () => {
                     <>
                         <div className='flex items-center justify-center gap-5'>
                             <div>
-                                {selectedTicket.returnTrip.seatNumbers.length !== 0 && <p className='text-lg'>Chiều đi: </p>}
                                 <div className='pl-4'>
-                                    <p>Thời gian: {formattedDate(selectedTicket?.departureTrip?.scheduleId?.startTime)} - {formattedTime(selectedTicket?.departureTrip?.scheduleId?.startTime)}</p>
-                                    <p>Địa điểm: {selectedTicket?.departureTrip?.scheduleId?.routeId?.origin}</p>
-                                    <p>Xe: {selectedTicket?.departureTrip?.scheduleId?.busId?.licensePlate}</p>
-                                    <p>Loại xe: {selectedTicket?.departureTrip?.scheduleId?.busId?.totalSeats} chỗ</p>
-                                    <p>Số ghế: {selectedTicket?.departureTrip?.seatNumbers.join(', ')}</p>
+                                    <p>Thời gian: {formattedDate(selectedTicket?.scheduleId?.startTime)} - {formattedTime(selectedTicket?.scheduleId?.startTime)}</p>
+                                    <p>Địa điểm: {selectedTicket?.scheduleId?.routeId?.origin} - {selectedTicket?.scheduleId?.routeId?.destination}</p>
+                                    <p>Xe: {selectedTicket?.scheduleId?.busId?.licensePlate}</p>
+                                    <p>Loại xe: {selectedTicket?.scheduleId?.busId?.totalSeats} chỗ</p>
+                                    <p>Số ghế: {selectedTicket?.seatNumbers.join(', ')}</p>
                                 </div>
                             </div>
-                            {
-                                selectedTicket?.returnTrip?.seatNumbers.length !== 0 && (
-                                    <div>
-                                        <p className='text-xl'>Chiều về: </p>
-                                        <div className='pl-4'>
-                                            <p>Thời gian: {formattedDate(selectedTicket?.returnTrip?.scheduleId?.startTime)} - {formattedTime(selectedTicket?.returnTrip?.scheduleId?.startTime)}</p>
-                                            <p>Địa điểm: {selectedTicket?.returnTrip?.scheduleId?.routeId?.destination}</p>
-                                            <p>Xe: {selectedTicket?.returnTrip?.scheduleId?.busId?.licensePlate}</p>
-                                            <p>Loại xe: {selectedTicket?.returnTrip?.scheduleId?.busId?.totalSeats} chỗ</p>
-                                            <p>Số ghế: {selectedTicket?.returnTrip?.seatNumbers.join(', ')}</p>
-                                        </div>
-                                    </div>
-                                )
-                            }
                         </div>
                         <div className='text-end w-full mt-3 text-lg'>Tổng thanh toán: {selectedTicket?.price.toLocaleString()}đ</div>
                     </>

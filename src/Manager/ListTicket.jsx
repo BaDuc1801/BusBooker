@@ -1,13 +1,15 @@
 import { Button, Input, Modal, Table, Tabs } from 'antd'
 import Item from 'antd/es/list/Item'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { IoInformationCircle } from 'react-icons/io5'
 import { FiXCircle } from 'react-icons/fi'
+import { UserContext } from '../Context/UserContext'
 
 const ListTicket = () => {
     const beUrl = import.meta.env.VITE_APP_BE_URL;
     const [listTicket, setListTicket] = useState([]);
+    const { user } = useContext(UserContext);
 
     const [waitingTickets, setWaitingTickets] = useState([]);
     const [completedTickets, setCompletedTickets] = useState([]);
@@ -16,7 +18,17 @@ const ListTicket = () => {
     useEffect(() => {
         const fetchData = async () => {
             const data = await axios.get(`${beUrl}/tickets/all`)
-            setListTicket(data.data);
+            if (user?.role === "Operator") {
+                const filteredData = data.data.filter(ticket => {
+                    const isDepartureValid = ticket?.scheduleId?.busId?.owner === user?.owner;
+                    const isReturnValid = ticket?.scheduleId?.busId?.owner === user?.owner;
+                    return isDepartureValid || isReturnValid;
+                });
+                setListTicket(filteredData);
+                return;
+            } else {
+                setListTicket(data.data)
+            }
         }
         fetchData()
     }, []);
@@ -34,8 +46,15 @@ const ListTicket = () => {
 
     const formattedTime = (date) => {
         const getDate = new Date(date);
-        const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' };
+        const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Ho_Chi_Minh' };
         const rs = getDate.toLocaleTimeString('vi-VN', options);
+        return rs
+    }
+
+    const formattedTimeFromDB = (date) => {
+        const getDate = new Date(date);
+        const options = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' };
+        const rs = getDate.toLocaleTimeString('UTC', options);
         return rs
     }
 
@@ -59,10 +78,36 @@ const ListTicket = () => {
             }
         },
         {
-            title: 'ID Vé',
-            dataIndex: '_id',
+            title: 'Điểm xuất phát',
+            dataIndex: 'scheduleId',
             key: '_id',
-            // width: 300
+            render: (text) => {
+                return <p>{text?.routeId?.origin}</p>
+            }
+        },
+        {
+            title: 'Điểm đến',
+            dataIndex: 'scheduleId',
+            key: '_id',
+            render: (text) => {
+                return <p>{text?.routeId?.destination}</p>
+            }
+        },
+        {
+            title: 'Thời gian khởi hành',
+            dataIndex: 'scheduleId',
+            key: '_id',
+            render: (text) => {
+                return <p>{formattedDate(text?.startTime)} - {formattedTimeFromDB(text?.startTime)}</p>
+            }
+        },
+        {
+            title: 'Thời gian dự kiến đến nơi',
+            dataIndex: 'scheduleId',
+            key: '_id',
+            render: (text) => {
+                return <p>{formattedDate(text?.endTime)} - {formattedTimeFromDB(text?.endTime)}</p>
+            }
         },
         {
             title: "Tên khách",
@@ -86,18 +131,6 @@ const ListTicket = () => {
             key: 'phoneNumber',
             render: (text) => {
                 return <p>{text}</p>
-            }
-        },
-        {
-            title: 'Loại Vé',
-            dataIndex: 'returnTrip',
-            key: 'returnTrip',
-            render: (text) => {
-                if (text.seatNumbers.length === 0) {
-                    return <span>1 chiều</span>;
-                } else {
-                    return <span>2 chiều</span>;
-                }
             }
         },
         {
@@ -134,7 +167,7 @@ const ListTicket = () => {
                 );
             },
         },
-        ...(activeTab === '1' ? [{
+        ...((user?.role !== "Operator" && activeTab === '1') ? [{
             title: 'Hủy vé',
             dataIndex: 'status',
             render: (_text, record) => {
@@ -166,14 +199,13 @@ const ListTicket = () => {
         fetchData();
     };
 
-    const [searchQuery, setSearchQuery] = useState('');  
+    const [searchQuery, setSearchQuery] = useState('');
 
     const filteredTickets = (tickets) => {
         return tickets.filter(ticket => {
-            const { _id, username, email, phoneNumber } = ticket;
+            const { username, email, phoneNumber } = ticket;
             return (
-                _id.includes(searchQuery) || 
-                username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase())
             );
@@ -233,29 +265,14 @@ const ListTicket = () => {
                     <>
                         <div className='flex items-center justify-center gap-5'>
                             <div>
-                                {selectedTicket.returnTrip.seatNumbers.length !== 0 && <p className='text-lg'>Chiều đi: </p>}
                                 <div className='pl-4'>
-                                    <p>Thời gian: {formattedDate(selectedTicket?.departureTrip?.scheduleId?.startTime)} - {formattedTime(selectedTicket?.departureTrip?.scheduleId?.startTime)}</p>
-                                    <p>Địa điểm: {selectedTicket?.departureTrip?.scheduleId?.routeId?.origin}</p>
-                                    <p>Xe: {selectedTicket?.departureTrip?.scheduleId?.busId?.licensePlate}</p>
-                                    <p>Loại xe: {selectedTicket?.departureTrip?.scheduleId?.busId?.totalSeats} chỗ</p>
-                                    <p>Số ghế: {selectedTicket?.departureTrip?.seatNumbers.join(', ')}</p>
+                                    <p>Thời gian: {formattedDate(selectedTicket?.scheduleId?.startTime)} - {formattedTime(selectedTicket?.scheduleId?.startTime)}</p>
+                                    <p>Địa điểm: {selectedTicket?.scheduleId?.routeId?.origin}</p>
+                                    <p>Xe: {selectedTicket?.scheduleId?.busId?.licensePlate}</p>
+                                    <p>Loại xe: {selectedTicket?.scheduleId?.busId?.totalSeats} chỗ</p>
+                                    <p>Số ghế: {selectedTicket?.seatNumbers.join(', ')}</p>
                                 </div>
                             </div>
-                            {
-                                selectedTicket?.returnTrip?.seatNumbers.length !== 0 && (
-                                    <div>
-                                        <p className='text-xl'>Chiều về: </p>
-                                        <div className='pl-4'>
-                                            <p>Thời gian: {formattedDate(selectedTicket?.returnTrip?.scheduleId?.startTime)} - {formattedTime(selectedTicket?.returnTrip?.scheduleId?.startTime)}</p>
-                                            <p>Địa điểm: {selectedTicket?.returnTrip?.scheduleId?.routeId?.destination}</p>
-                                            <p>Xe: {selectedTicket?.returnTrip?.scheduleId?.busId?.licensePlate}</p>
-                                            <p>Loại xe: {selectedTicket?.returnTrip?.scheduleId?.busId?.totalSeats} chỗ</p>
-                                            <p>Số ghế: {selectedTicket?.returnTrip?.seatNumbers.join(', ')}</p>
-                                        </div>
-                                    </div>
-                                )
-                            }
                         </div>
                         <div className='text-end w-full mt-3 text-lg'>Tổng thanh toán: {selectedTicket?.price.toLocaleString()}đ</div>
                     </>

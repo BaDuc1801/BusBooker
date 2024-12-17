@@ -130,19 +130,11 @@ const Layout = () => {
 
     const itemsDrop = [
         {
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                    1st menu item
-                </a>
-            ),
+            label: <Link to='/my-profile'>Hồ sơ cá nhân</Link>,
             key: '0',
         },
         {
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                    2nd menu item
-                </a>
-            ),
+            label: <Link to='/change-password'>Đổi mật khẩu</Link>,
             key: '1',
         },
         {
@@ -232,14 +224,14 @@ const Layout = () => {
                         Đơn hàng của tôi
                     </Link>
                     {
-                        user?.role !== "Admin" ?
-                            <Link to="register-sale" className="flex items-center gap-2 cursor-pointer max-md:hidden">
+                        user?.role === "Customer" ?
+                            <Link to= "register-sale" className="flex items-center gap-2 cursor-pointer max-md:hidden">
                                 Mở bán vé trên BusBooker
                             </Link>
                             : <></>
                     }
                     {
-                        user?.role === "Admin" ?
+                        user?.role !== "Customer" ?
                             <>
                                 <Link to="/manager" className="flex items-center gap-1 cursor-pointer max-md:hidden">
                                     <MdManageAccounts className="text-xl" />

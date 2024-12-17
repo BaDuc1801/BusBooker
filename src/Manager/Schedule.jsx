@@ -1,13 +1,14 @@
 import { Button, Col, DatePicker, Form, Input, InputNumber, Modal, notification, Row, Select, Table, Tabs } from 'antd';
 import Item from 'antd/es/list/Item';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaTrash } from 'react-icons/fa';
 import { RiEditFill } from 'react-icons/ri';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 import utc from 'dayjs/plugin/utc';
+import { UserContext } from '../Context/UserContext';
 dayjs.extend(utc);
 
 const Schedule = () => {
@@ -15,22 +16,35 @@ const Schedule = () => {
     const [listSchedule, setListSchedule] = useState([]);
     const [listRoute, setListRoute] = useState([]);
     const [listBus, setListBus] = useState([]);
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`${beUrl}/schedule/all`);
-                setListSchedule(response.data);
-                const response1 = await axios.get(`${beUrl}/routes`);
-                setListRoute(response1.data);
-                const response2 = await axios.get(`${beUrl}/bus`);
-                setListBus(response2.data);
+                const response1 = await axios.get(`${beUrl}/schedule/all`);
+                let scheduleData = response1.data;
+                const response2 = await axios.get(`${beUrl}/routes`);
+                const routeData = response2.data;
+                const response3 = await axios.get(`${beUrl}/bus`);
+                let busData = response3.data;
+
+                if (user?.role === "Operator") {
+                    busData = busData.filter(bus => bus.owner === user.owner);
+                    let busIds = busData.map(bus => bus._id); 
+                    scheduleData = scheduleData.filter(schedule => busIds.includes(schedule.busId._id));
+                }
+
+                setListBus(busData);
+                setListSchedule(scheduleData);
+                setListRoute(routeData);
             } catch (error) {
-                console.error('Error fetching vouchers:', error);
+                console.error('Error fetching data:', error);
             }
         };
+
         fetchData();
     }, []);
+
 
     const [selectedSchedule, setSelectedSchedule] = useState(null);
     const [confirmDelete, setConfirmDelete] = useState(false);

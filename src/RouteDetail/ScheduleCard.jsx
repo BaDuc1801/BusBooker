@@ -6,6 +6,7 @@ import { TbArmchair2, TbArmchair2Off } from 'react-icons/tb'
 import SeatMap from './SeatMap'
 import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../Context/UserContext'
+import ReviewCard from './ReviewCard'
 
 const ScheduleCard = ({ item, setText, endTime }) => {
   const formattedDate = date => {
@@ -23,6 +24,7 @@ const ScheduleCard = ({ item, setText, endTime }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [visible, setVisiblee] = useState(false)
   const [more, setMore] = useState(false)
+  const [rv, setRv] = useState(false)
 
   const toggleModal = () => {
     setVisiblee(prevVisible => !prevVisible)
@@ -30,6 +32,10 @@ const ScheduleCard = ({ item, setText, endTime }) => {
 
   const onClickButton = () => {
     setMore(pre => !pre)
+  }
+
+  const onClickReview = () => {
+    setRv(pre => !pre)
   }
 
   const handleImageClick = index => {
@@ -151,8 +157,8 @@ const ScheduleCard = ({ item, setText, endTime }) => {
               Còn {item?.availableSeats} chỗ trống
             </p>
             <div className='flex gap-4 items-center'>
-              <p className='text-[#1677ff] cursor-pointer underline'>
-                Thông tin chi tiết
+              <p className='text-[#1677ff] cursor-pointer underline' onClick={onClickReview}>
+                Xem đánh giá
               </p>
               <button
                 className={`font-semibold p-2 rounded-md text-md w-[115px] ${!more
@@ -269,6 +275,9 @@ const ScheduleCard = ({ item, setText, endTime }) => {
           </div>
         </>
       )}
+      {
+        rv && <ReviewCard busId={item?.busId?._id}/>
+      }
     </div>
   )
 }

@@ -6,16 +6,21 @@ import { UserContext } from '../Context/UserContext';
 import { PiSealPercentFill } from 'react-icons/pi';
 import { CiRoute } from 'react-icons/ci';
 import { RiCalendarScheduleFill } from 'react-icons/ri';
+import { BiSolidCarGarage } from 'react-icons/bi';
 
 const Manager = () => {
     const { user } = useContext(UserContext);
     const nav = useNavigate();
     useEffect(() => {
-        if (user?.role !== "Admin") {
+        if (user?.role === "Customer") {
             nav("/");
-            return;
         }
-        nav("/manager/users")
+        if (user?.role === "Admin") {
+            nav("/manager/users")
+        }
+        if (user?.role === "Operator") {
+            nav("/manager/bus")
+        }
     }, []);
 
     const items = [
@@ -47,12 +52,24 @@ const Manager = () => {
         {
             key: 'vouchers',
             label: 'Quản lý voucher',
-            icon:<PiSealPercentFill />
+            icon: <PiSealPercentFill />
         },
+        {
+            key: 'garage',
+            label: 'Thêm nhà xe',
+            icon: <BiSolidCarGarage />
+        }
     ];
     const onClick = (e) => {
         nav(`/manager/${e.key}`);
     };
+
+    const keysToRemoveForOperator = ['users', 'garage', 'vouchers'];
+
+    const filteredItems = items.filter(item => 
+        user?.role !== 'Operator' || !keysToRemoveForOperator.includes(item.key)
+    );
+
     return (
         <div className='h-[calc(100vh-72px)] flex'>
             <Menu
@@ -60,9 +77,9 @@ const Manager = () => {
                 style={{
                     width: 256, height: "100%"
                 }}
-                defaultSelectedKeys={['users']}
+                defaultSelectedKeys={user?.role === 'Operator' ? ['bus'] : ['users']}
                 mode="inline"
-                items={items}
+                items={filteredItems}
             />
             <div className="flex-grow">
                 <Outlet />

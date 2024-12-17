@@ -1,20 +1,29 @@
 import { Button, Form, Input, Modal, notification, Select, Table, Tabs, Upload } from 'antd';
 import Item from 'antd/es/list/Item';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaTrash } from 'react-icons/fa';
 import { RiEditFill } from 'react-icons/ri';
 import { MdOutlineFileUpload } from 'react-icons/md';
+import { UserContext } from '../Context/UserContext';
 
 const BusManager = () => {
     const beUrl = import.meta.env.VITE_APP_BE_URL;
     const [listBus, setListBus] = useState([]);
+    const [listUser, setListUser] = useState([])
+    const {user} = useContext(UserContext);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(`${beUrl}/bus`);
-                setListBus(response.data);
+                const res = await axios.get(`${beUrl}/users`)
+                let busData = response.data;
+                setListUser(res.data);
+                if (user?.role === "Operator") {
+                    busData = busData.filter(bus => bus.owner === user.owner);
+                }
+                setListBus(busData);
             } catch (error) {
                 console.error('Error fetching buss:', error);
             }
@@ -22,13 +31,15 @@ const BusManager = () => {
         fetchData();
     }, []);
 
-    function getUniqueOwners(listBus) {
-        const owners = listBus.map(bus => bus.owner);
+    function getUniqueOwners(listUser) {
+        const owners = listUser
+            .map(user => user.owner)
+            .filter(owner => owner && owner.trim() !== '');
         const uniqueOwners = [...new Set(owners)];
         return uniqueOwners;
     }
 
-    const uniqueOwners = getUniqueOwners(listBus);
+    const uniqueOwners = getUniqueOwners(listUser);
 
     const [selectedBus, setSelectedBus] = useState(null);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -259,17 +270,17 @@ const BusManager = () => {
                             <Input placeholder='Nhập biển số xe' className='p-2' />
                         </Form.Item>
                         <Form.Item
-                            rules={[{required: true}]}
+                            rules={[{ required: true }]}
                         >
-                        <Upload
-                            listType="picture"
-                            beforeUpload={() => false}
-                            maxCount={4}
-                            multiple
-                            onChange={({ fileList }) => form.setFieldsValue({ img: fileList })}
-                        >
-                            <Button icon={<MdOutlineFileUpload />}>Upload (Max: 4)</Button>
-                        </Upload>
+                            <Upload
+                                listType="picture"
+                                beforeUpload={() => false}
+                                maxCount={4}
+                                multiple
+                                onChange={({ fileList }) => form.setFieldsValue({ img: fileList })}
+                            >
+                                <Button icon={<MdOutlineFileUpload />}>Upload (Max: 4)</Button>
+                            </Upload>
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" htmlType="submit" className='w-full mt-6'>

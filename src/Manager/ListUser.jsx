@@ -44,8 +44,13 @@ const ListUser = () => {
     },
     {
       title: 'Chức vụ',
-      dataIndex: 'role',
+      dataIndex: '',
       key: 'role',
+      render: (text) => {
+        return (
+          text.owner ? <p>{text.role} - {text.owner}</p> : <p>{text.role}</p>
+        )
+      }
     },
     {
       title: 'Chỉnh sửa',
@@ -140,11 +145,13 @@ const ListUser = () => {
 
   const filteredUser = (user) => {
     return user.filter(user => {
-      const { email, phoneNumber, username } = user;
+      const { email, phoneNumber, username, role, owner } = user;
       return (
         email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        username?.toLowerCase().includes(searchQuery.toLowerCase())
+        username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        owner?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        role?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     });
   };
@@ -164,7 +171,6 @@ const ListUser = () => {
         pagination={{ pageSize: 6 }}
       />
 
-      {/* Edit Modal */}
       <Modal
         title="Chỉnh sửa người dùng"
         open={isEditModalVisible}
@@ -204,7 +210,6 @@ const ListUser = () => {
         </div>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
       <Modal
         title="Xác nhận xóa người dùng"
         open={confirmDelete}

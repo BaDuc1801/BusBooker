@@ -16,6 +16,9 @@ import VoucherManage from "./Manager/VoucherManage.jsx"
 import BusManager from "./Manager/BusManager.jsx"
 import RouteManage from "./Manager/RouteManage.jsx"
 import Schedule from "./Manager/Schedule.jsx"
+import AddGarage from "./Manager/AddGarage.jsx"
+import Profile from "./Profile.jsx"
+import ChangePassword from "./Login/ChangePassword.jsx"
 
 function App() {
   return (
@@ -28,6 +31,8 @@ function App() {
         <Route path="/payment" element={<Payment />} />
         <Route path="/my-storage" element={<UserStorage />} />
         <Route path="/register-sale" element={<RegisterSale />} />
+        <Route path="/my-profile" element={<Profile />} />
+        <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/manager" element={<Manager />}>
           <Route path="/manager/users" element={<ListUser />} />
           <Route path="/manager/tickets" element={<ListTicket />} />
@@ -35,6 +40,7 @@ function App() {
           <Route path="/manager/bus" element={<BusManager />} />
           <Route path="/manager/routes" element={<RouteManage />} />
           <Route path="/manager/schedules" element={<Schedule />} />
+          <Route path="/manager/garage" element={<AddGarage />} />
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
