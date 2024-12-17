@@ -231,7 +231,7 @@ const Layout = () => {
                             : <></>
                     }
                     {
-                        user?.role !== "Customer" ?
+                        (user?.role !== "Customer" || user?.role) ?
                             <>
                                 <Link to="/manager" className="flex items-center gap-1 cursor-pointer max-md:hidden">
                                     <MdManageAccounts className="text-xl" />
