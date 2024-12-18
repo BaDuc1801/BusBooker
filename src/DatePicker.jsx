@@ -15,6 +15,7 @@ const DatePickerSpace = (props) => {
     const [originLocation, setOriginLocation] = useState(null);
     const [destinationLocation, setDestinationLocation] = useState(null);
     const defaultDate = dayjs().add(1, 'day');
+    
 
     const formattedDate = (date) => {
         const getDate = new Date(date);

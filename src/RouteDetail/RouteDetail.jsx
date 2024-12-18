@@ -31,6 +31,7 @@ const RouteDetail = () => {
                 setRoute(data.data)
             } else {
                 const defaultDate = dayjs().add(1, 'day');
+                localStorage.setItem('startTime', formattedDate(defaultDate));
                 let url = `${beUrl}/routes/find-schedule?origin=${origin}&destination=${desti}&startTime=${formattedDate(defaultDate.toISOString())}`;
                 const data = await axios.get(url)
                 setRoute(data.data)

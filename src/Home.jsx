@@ -16,6 +16,7 @@ const Home = () => {
         localStorage.removeItem("giaChieuDi");
         localStorage.removeItem("chieuVe");
         localStorage.removeItem("giaChieuVe");
+        localStorage.removeItem("clickCount");
     }, [])
 
     return (
