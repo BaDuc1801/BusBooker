@@ -19,7 +19,7 @@ const Profile = () => {
     
     const onFinish = async (value) => {
         try {
-            await axios.put(`${beUrl}/users/email`, value);
+            await axios.put(`${beUrl}/users/update-user`, value);
             setUser({
                 ...user,
                 ...value, 
