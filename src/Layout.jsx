@@ -174,7 +174,6 @@ const Layout = () => {
 
     const handleClose = async () => {
         await axios.put(`${beUrl}/noti/${selectedNoti._id}`)
-        setNotiCount(notiCount - 1)
         const updatedListNoti = listNoti.map(item =>
             item._id === selectedNoti._id ? { ...item, read: true } : item
         );
@@ -182,9 +181,11 @@ const Layout = () => {
         setIsModalVisible(false);
     };
 
-    const itemsNoti = listNoti.filter(item => !item.read).flatMap((item, index) => [
+    const itemsNoti = listNoti.flatMap((item, index) => [
         {
-            label: <p onClick={() => showModal(item)} className="flex items-center justify-between gap-2"><p>Có 1 yêu cầu mở nhà xe từ <span className="font-bold">{item?.email}</span></p> {!item?.read ? <GoDotFill className="text-red-500" /> : ""}</p>,
+            label: <p onClick={() => {
+                showModal(item); setNotiCount(notiCount - 1)
+            }} className="flex items-center justify-between gap-2"><p>Có 1 yêu cầu mở nhà xe từ <span className="font-bold">{item?.email}</span></p> {!item?.read ? <GoDotFill className="text-red-500" /> : ""}</p>,
             key: index.toString(),
         },
         {
@@ -225,13 +226,13 @@ const Layout = () => {
                     </Link>
                     {
                         user?.role === "Customer" ?
-                            <Link to= "register-sale" className="flex items-center gap-2 cursor-pointer max-md:hidden">
+                            <Link to="register-sale" className="flex items-center gap-2 cursor-pointer max-md:hidden">
                                 Mở bán vé trên BusBooker
                             </Link>
                             : <></>
                     }
                     {
-                        (user?.role === "Admin" || user?.role ==="Operator") ?
+                        (user?.role === "Admin" || user?.role === "Operator") ?
                             <>
                                 <Link to="/manager" className="flex items-center gap-1 cursor-pointer max-md:hidden">
                                     <MdManageAccounts className="text-xl" />

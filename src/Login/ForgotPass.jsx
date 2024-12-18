@@ -2,13 +2,16 @@ import { Button, Form, Input } from 'antd'
 import axios from 'axios';
 import React from 'react'
 import { IoBus } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPass = () => {
   const { form } = Form.useForm();
   const beUrl = import.meta.env.VITE_APP_BE_URL;
+  const nav = useNavigate();
 
   const onFinish = async (value) => {
       await axios.post(`${beUrl}/email`, value);
+      nav('/login');
   }
 
   return (

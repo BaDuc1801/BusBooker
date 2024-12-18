@@ -46,8 +46,8 @@ const UserProvider = ({ children }) => {
             setUser(userRes.data);
             setAuthenticated(true);
         } catch (error) {
-            console.error('Login failed:', error);
             setAuthenticated(false);
+            throw new Error('Login failed:', error);
         }
     };
 
