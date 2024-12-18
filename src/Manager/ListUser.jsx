@@ -164,6 +164,7 @@ const ListUser = () => {
         onChange={(e) => setSearchQuery(e.target.value)}
         className="p-3"
       />
+
       <Table
         dataSource={filteredUser(listUser)}
         columns={columns}

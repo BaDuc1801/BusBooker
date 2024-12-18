@@ -173,18 +173,25 @@ const Layout = () => {
     };
 
     const handleClose = async () => {
-        await axios.put(`${beUrl}/noti/${selectedNoti._id}`)
-        const updatedListNoti = listNoti.map(item =>
-            item._id === selectedNoti._id ? { ...item, read: true } : item
-        );
-        setListNoti(updatedListNoti);
-        setIsModalVisible(false);
+        if (selectedNoti.read === true) {
+            setIsModalVisible(false);  
+        } else {
+            await axios.put(`${beUrl}/noti/${selectedNoti._id}`);  
+            const updatedListNoti = listNoti.map(item =>
+                item._id === selectedNoti._id ? { ...item, read: true } : item
+            );
+            setListNoti(updatedListNoti);  
+            setIsModalVisible(false); 
+        }
     };
 
     const itemsNoti = listNoti.flatMap((item, index) => [
         {
             label: <p onClick={() => {
-                showModal(item); setNotiCount(notiCount - 1)
+                if (!item.read) {
+                    setNotiCount(notiCount - 1);
+                }
+                showModal(item);
             }} className="flex items-center justify-between gap-2"><p>Có 1 yêu cầu mở nhà xe từ <span className="font-bold">{item?.email}</span></p> {!item?.read ? <GoDotFill className="text-red-500" /> : ""}</p>,
             key: index.toString(),
         },

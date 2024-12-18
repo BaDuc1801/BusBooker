@@ -176,6 +176,7 @@ const BusManager = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            
             notification.success({ message: 'Tạo xe thành công' });
             form.resetFields();
             setListBus([...listBus, response.data])
