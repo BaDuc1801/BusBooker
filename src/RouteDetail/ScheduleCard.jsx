@@ -86,7 +86,7 @@ const ScheduleCard = ({ item, setText, endTime }) => {
     let clickCount = parseInt(localStorage.getItem('clickCount'), 10) || 0;
     clickCount += 1;
     localStorage.setItem('clickCount', clickCount);
-    if (endTime === null) {
+    if (endTime === "null") {
       localStorage.setItem('chieuDi', JSON.stringify({ scheduleId: item._id, startTime: item.startTime, busId: item.busId._id, licensePlate: item.busId.licensePlate, totalSeats: item.busId.totalSeats, seatNumber: selectedSeats }));
       localStorage.setItem('giaChieuDi', totalPrice)
       nav("/payment");

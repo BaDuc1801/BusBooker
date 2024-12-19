@@ -1,11 +1,11 @@
 import { DatePicker, Select } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { FaCircleDot, FaLocationDot } from 'react-icons/fa6';
 import { FaRegCalendarAlt } from 'react-icons/fa';
+import { UserContext } from './Context/UserContext';
 import { useNavigate } from 'react-router-dom';
-
 dayjs.extend(customParseFormat);
 
 const DatePickerSpace = (props) => {
@@ -14,50 +14,35 @@ const DatePickerSpace = (props) => {
     const nav = useNavigate()
     const [originLocation, setOriginLocation] = useState(null);
     const [destinationLocation, setDestinationLocation] = useState(null);
-    const defaultDate = dayjs().add(1, 'day');
-    
+    const [selectedDates, setSelectedDates] = useState(null);
 
-    const formattedDate = (date) => {
-        const getDate = new Date(date);
-        const year = getDate.getFullYear();
-        const month = String(getDate.getMonth() + 1).padStart(2, '0'); 
-        const day = String(getDate.getDate()).padStart(2, '0'); 
-    
-        return `${year}-${month}-${day}`; 
-    };
-    const [selectedDates, setSelectedDates] = useState(formattedDate(defaultDate));
-
-    const [originUI, setOriginUI] = useState()
-    const [destiUI, setDestiUI] = useState()
+    const [originUI, setOriginUI] = useState(localStorage.getItem('originChoice'))
+    const [destiUI, setDestiUI] = useState(localStorage.getItem('destiChoice'))
 
     const handleOriginChange = (value) => {
         setOriginLocation(value);
         setOriginUI(value);
-        localStorage.setItem('originChoice', value);
+        localStorage.setItem('originChoice', value); // Lưu vào localStorage
     };
 
     const handleDestinationChange = (value) => {
         setDestinationLocation(value);
         setDestiUI(value);
-        localStorage.setItem('destiChoice', value);
+        localStorage.setItem('destiChoice', value); // Lưu vào localStorage
     };
 
 
-    const handleDateChange1 = (_dates, dateStrings) => {
-        setSelectedDates(dateStrings)
-    };
-
-    const handleDateChange2 = (_dates, dateStrings) => {
-        setSelectedDates(dateStrings)
+    const handleDateChange = (_dates, dateStrings) => {
+        setSelectedDates(Array.isArray(dateStrings) ? dateStrings : [dateStrings]);
     };
 
     const handleSearch = () => {
-        if (Array.isArray(selectedDates)) {
+        if (Array.isArray(selectedDates) && selectedDates.length === 2) {
             localStorage.setItem('startTime', selectedDates[0]);
             localStorage.setItem('endTime', selectedDates[1]);
         } else {
             localStorage.setItem('startTime', selectedDates)
-            localStorage.setItem('endTime', "")
+            localStorage.setItem('endTime', null)
         }
         nav('/route-details');
     };
@@ -73,17 +58,20 @@ const DatePickerSpace = (props) => {
         return current && current < dayjs().endOf('day');
     };
 
-    const storedOrigin = localStorage.getItem('originChoice');
-    const storedDestination = localStorage.getItem('destiChoice');
-
     useEffect(() => {
+        const storedOrigin = localStorage.getItem('originChoice');
+        const storedDestination = localStorage.getItem('destiChoice');
+        
+        console.log('Stored Origin:', storedOrigin); // Kiểm tra giá trị
+        console.log('Stored Destination:', storedDestination); // Kiểm tra giá trị
+    
         if (storedOrigin) {
             setOriginUI(storedOrigin);
         }
         if (storedDestination) {
             setDestiUI(storedDestination);
         }
-    }, [storedOrigin, storedDestination]);
+    }, []);
 
     return (
         <div className='grid grid-cols-1 md:grid-cols-[2fr_2fr_3fr_1fr] gap-4'>
@@ -139,16 +127,16 @@ const DatePickerSpace = (props) => {
                     <div className='flex flex-col gap-2'>
                         <p className='flex items-center gap-2 font-semibold'><FaRegCalendarAlt className='text-blue-600' />Ngày đi</p>
                         <DatePicker size='large'
-                            className='flex-1' disabledDate={disabledDate} defaultValue={defaultDate}
-                            onChange={handleDateChange1}
+                            className='flex-1' disabledDate={disabledDate}
+                            onChange={handleDateChange}
                         />
                     </div>
                     :
                     <div className='flex flex-col gap-2'>
                         <p className='flex items-center gap-2 font-semibold'><FaRegCalendarAlt className='text-blue-600' />Ngày đi và về</p>
                         <RangePicker size='large'
-                            className='flex-1' disabledDate={disabledDate} defaultValue={[defaultDate, defaultDate.add(1, 'day')]} 
-                            onChange={handleDateChange2}
+                            className='flex-1' disabledDate={disabledDate}
+                            onChange={handleDateChange}
                         />
                     </div>
             }

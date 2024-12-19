@@ -206,13 +206,13 @@ const UserStorage = () => {
                 onChange={setActiveTab}
                 className='bg-white rounded-md px-4 w-[70%] pb-4'>
                 <Item tab={<p className='w-1/3 font-semibold text-lg'>Hiện tại</p>} key='1'>
-                    {listTicket && <Table dataSource={waitingTickets} columns={columns} />}
+                    {listTicket && <Table dataSource={waitingTickets} columns={columns} pagination={{ pageSize: 4 }}/>}
                 </Item>
                 <Item tab={<p className='w-1/3 font-semibold text-lg'>Đã đi</p>} key='2'>
-                    {listTicket && <Table dataSource={completedTickets} columns={columns} />}
+                    {listTicket && <Table dataSource={completedTickets} columns={columns} pagination={{ pageSize: 4 }}/>}
                 </Item>
                 <Item tab={<p className='w-1/3 font-semibold text-lg'>Đã hủy</p>} key='3'>
-                    {listTicket && <Table dataSource={cancelledTickets} columns={columns} />}
+                    {listTicket && <Table dataSource={cancelledTickets} columns={columns} pagination={{ pageSize: 4 }}/>}
                 </Item>
             </Tabs>
             <Modal
